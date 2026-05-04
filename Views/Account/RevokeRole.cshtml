@@ -1,0 +1,45 @@
+@model Online_Booking_System.ViewModels.RevokeRoleViewModel
+
+@{
+    ViewData["Title"] = "Revoke Role";
+}
+
+<div class="row justify-content-center fade-in">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-lg p-4 text-center">
+            <div class="mb-4">
+                <div class="bg-danger-subtle text-danger rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-shield-x" viewBox="0 0 16 16">
+                        <path d="M5.338 1.59a.485.485 0 0 0-.106.333v3.462c0 2.023 1.484 3.991 3.262 5.016a.485.485 0 0 0 .512 0c1.778-1.025 3.262-2.993 3.262-5.016V1.923a.485.485 0 0 0-.106-.333L8 0 5.338 1.59zM8 1a.5.5 0 0 1 .147.07l2 .5a.5.5 0 0 1 .353.483v3.462c0 1.564-1.127 3.12-2.5 4.024-1.373-.904-2.5-2.46-2.5-4.024V2.053a.5.5 0 0 1 .353-.483l2-.5A.5.5 0 0 1 8 1z"/>
+                        <path d="M4.146 6.146a.5.5 0 0 1 .708 0L8 9.293l3.146-3.147a.5.5 0 0 1 .708.708L8.707 10l3.147 3.146a.5.5 0 0 1-.708.708L8 10.707l-3.146 3.147a.5.5 0 0 1-.708-.708L7.293 10 4.146 6.854a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </div>
+                <h2 class="fw-bold text-danger">Revoke Role?</h2>
+                <p class="text-muted">You are about to remove a role from this user. This action may restrict their access to certain features.</p>
+            </div>
+
+            <div class="card bg-light border-0 mb-4 text-start">
+                <div class="card-body">
+                    <div class="row mb-2">
+                        <div class="col-sm-4 text-muted small">Target User</div>
+                        <div class="col-sm-8 fw-bold">@ViewBag.User.Email</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4 text-muted small">Role to Revoke</div>
+                        <div class="col-sm-8"><span class="badge bg-danger">@ViewBag.Role</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <form asp-action="RevokeRole" method="post">
+                <input type="hidden" asp-for="UserId" />
+                <input type="hidden" asp-for="Role" />
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-danger btn-lg flex-grow-1">Confirm Revoke</button>
+                    <a asp-action="Users" class="btn btn-light btn-lg flex-grow-1">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

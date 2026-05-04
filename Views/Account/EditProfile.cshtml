@@ -1,0 +1,64 @@
+@model Online_Booking_System.ViewModels.EditProfileViewModel
+
+@{
+    ViewData["Title"] = "Edit Profile";
+}
+
+<div class="row justify-content-center fade-in">
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+                <h2 class="fw-bold text-primary mb-0">Edit Profile</h2>
+                <a asp-action="Profile" class="btn btn-outline-secondary btn-sm">Back to Profile</a>
+            </div>
+
+            <form asp-action="EditProfile" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input asp-for="FirstName" class="form-control" placeholder="John" />
+                            <label asp-for="FirstName">First Name</label>
+                            <span asp-validation-for="FirstName" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input asp-for="LastName" class="form-control" placeholder="Doe" />
+                            <label asp-for="LastName">Last Name</label>
+                            <span asp-validation-for="LastName" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="PhoneNumber" class="form-control" placeholder="1234567890" />
+                    <label asp-for="PhoneNumber">Phone Number</label>
+                    <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="AvatarUrl" class="form-control" placeholder="https://example.com/avatar.jpg" />
+                    <label asp-for="AvatarUrl">Avatar URL</label>
+                    <span asp-validation-for="AvatarUrl" class="text-danger small"></span>
+                </div>
+
+                <div class="form-floating mb-4">
+                    <textarea asp-for="Bio" class="form-control" style="height: 100px" placeholder="Tell us about yourself"></textarea>
+                    <label asp-for="Bio">Bio</label>
+                    <span asp-validation-for="Bio" class="text-danger small"></span>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary px-4">Save Changes</button>
+                    <a asp-action="Profile" class="btn btn-light px-4">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
