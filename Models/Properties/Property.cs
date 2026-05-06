@@ -13,13 +13,21 @@ namespace Online_Booking_System.Models.Properties
         [Required]
         [StringLength(1000)]
         public string Description { get; set; } = string.Empty;
+        public string? Facilities { get; set; }
+        public double Rating { get; set; }
+
+        public int ReviewsCount { get; set; }
+        [MaxLength]
+        public string? GoogleMapUrl { get; set; }
+
+        public string? GalleryImages { get; set; }
 
         [Required]
         [Range(1, 100000)]
         public decimal PricePerNight { get; set; }
 
         [Required]
-        [StringLength(200)]
+        [MaxLength]
         public string Address { get; set; } = string.Empty;
 
         [Required]

@@ -1,0 +1,245 @@
+﻿@model Online_Booking_System.Models.Properties.Property
+
+@{
+    ViewData["Title"] = Model.Title ?? "Property Details";
+
+    // 1. تجهيز المرافق (Facilities)
+    var facilitiesList = string.IsNullOrEmpty(Model.Facilities)
+        ? new List<string>()
+        : Model.Facilities.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(f => f.Trim()).ToList();
+
+    // 2. تجهيز صور المعرض (Gallery Images)
+    var galleryImages = string.IsNullOrEmpty(Model.GalleryImages)
+        ? new List<string>()
+        : Model.GalleryImages.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToList();
+
+    // إضافة الصورة الأساسية لأول المعرض إذا لم تكن موجودة فيه
+    if (!string.IsNullOrEmpty(Model.ImageUrl) && !galleryImages.Contains(Model.ImageUrl))
+    {
+        galleryImages.Insert(0, Model.ImageUrl);
+    }
+
+    // 3. حساب النجوم ديناميكياً بناءً على التقييم
+    double rating = Model.Rating != null ? Convert.ToDouble(Model.Rating) : 0;
+    int fullStars = (int)Math.Floor(rating);
+    bool hasHalfStar = (rating - fullStars) >= 0.5;
+    int emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    // 4. دالة ديناميكية لتحديد أيقونة المرفق بناءً على الكلمة
+    Func<string, string> GetFacilityIcon = (facilityName) =>
+    {
+        var name = facilityName.ToLower();
+        if (name.Contains("wifi")) return "bi-wifi";
+        if (name.Contains("pool")) return "bi-water";
+        if (name.Contains("parking")) return "bi-car-front-fill";
+        if (name.Contains("air conditioning") || name.Contains("ac")) return "bi-snow";
+        if (name.Contains("kitchen")) return "bi-fire";
+        if (name.Contains("gym")) return "bi-bicycle";
+        if (name.Contains("sea view") || name.Contains("beach")) return "bi-brightness-high-fill";
+        if (name.Contains("breakfast") || name.Contains("restaurant")) return "bi-cup-hot-fill";
+        if (name.Contains("netflix") || name.Contains("tv")) return "bi-tv-fill";
+        if (name.Contains("balcony")) return "bi-building";
+        return "bi-check2-circle";
+    };
+}
+
+<div class="container py-5">
+    <div class="row g-5">
+
+        <!-- Left Side (Details) -->
+        <div class="col-lg-8">
+
+            <!-- Gallery Images (Dynamic Slider) -->
+            @if (galleryImages.Any())
+            {
+                <div id="propertyGallery" class="carousel slide mb-4 shadow-sm rounded-4 overflow-hidden" data-bs-ride="carousel">
+                    <div class="carousel-inner" style="height: 500px;">
+                        @for (int i = 0; i < galleryImages.Count; i++)
+                        {
+                            string imagePath = galleryImages[i].Contains("/") ? galleryImages[i] : $"/images/properties/{galleryImages[i]}";
+
+                            <div class="carousel-item @(i == 0 ? "active" : "")" style="height: 100%;">
+                                <img src="@imagePath" class="d-block w-100 h-100" style="object-fit: cover;" alt="Gallery Image @(i + 1)">
+                            </div>
+                        }
+                    </div>
+                    @if (galleryImages.Count > 1)
+                    {
+                        <button class="carousel-control-prev" type="button" data-bs-target="#propertyGallery" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#propertyGallery" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    }
+                </div>
+            }
+
+            <!-- Title & Dynamic Reviews -->
+            <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h1 class="fw-bold mb-1">@Model.Title</h1>
+                        <p class="text-muted fs-5 mb-2">
+                            <i class="bi bi-geo-alt-fill text-danger"></i> @Model.City, @Model.Country
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Reviews (Dynamic) -->
+                <div class="d-flex align-items-center mb-3">
+                    <div class="text-warning fs-5 me-2">
+                        @for (int i = 0; i < fullStars; i++)
+                        {
+                            <i class="bi bi-star-fill"></i>
+                        }
+                        @if (hasHalfStar)
+                        {
+                            <i class="bi bi-star-half"></i>
+                        }
+                        @for (int i = 0; i < emptyStars; i++)
+                        {
+                            <i class="bi bi-star"></i>
+                        }
+                    </div>
+                    <span class="text-dark fw-bold fs-5">@Model.Rating</span>
+                    <span class="text-muted ms-2">(@Model.ReviewsCount reviews)</span>
+                </div>
+            </div>
+
+            <!-- Property Info Badges -->
+            <div class="d-flex gap-3 flex-wrap mb-4">
+                <span class="badge bg-light text-dark border fs-6 p-2 d-flex align-items-center gap-2">
+                    <i class="bi bi-door-open fs-5 text-primary"></i> @Model.Bedrooms Bedrooms
+                </span>
+                <span class="badge bg-light text-dark border fs-6 p-2 d-flex align-items-center gap-2">
+                    <i class="bi bi-droplet fs-5 text-info"></i> @Model.Bathrooms Bathrooms
+                </span>
+                <span class="badge bg-light text-dark border fs-6 p-2 d-flex align-items-center gap-2">
+                    <i class="bi bi-people fs-5 text-success"></i> @Model.MaxGuests Guests
+                </span>
+            </div>
+
+            <!-- Description Section -->
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold mb-3">Description</h4>
+                    <p class="text-muted fs-5 mb-0" style="line-height: 1.8;">
+                        @Model.Description
+                    </p>
+                </div>
+            </div>
+
+            <!-- Facilities Section (Dynamic Icons) -->
+            @if (facilitiesList.Any())
+            {
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <h4 class="fw-bold mb-4">What this place offers</h4>
+                        <div class="row g-4">
+                            @foreach (var facility in facilitiesList)
+                            {
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi @GetFacilityIcon(facility) text-primary fs-4 me-3"></i>
+                                        <span class="fs-5 text-dark">@facility</span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- Location Map Section (Dynamic) -->
+            @if (!string.IsNullOrEmpty(Model.GoogleMapUrl))
+            {
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <h4 class="fw-bold mb-4">Location</h4>
+                        <div class="ratio ratio-16x9 rounded-4 overflow-hidden border">
+                            <iframe src="@Model.GoogleMapUrl"
+                                    allowfullscreen=""
+                                    loading="lazy"
+                                    referrerpolicy="no-referrer-when-downgrade"
+                                    style="border:0;"></iframe>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+
+        <!-- Right Side (Booking Card) -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-lg rounded-4 sticky-top" style="top:100px;">
+                <div class="card-body p-4">
+
+                    <!-- Price & Rating Summary -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="fw-bold text-primary mb-0">
+                            $@Model.PricePerNight
+                            <span class="fs-6 text-muted fw-normal">/ night</span>
+                        </h2>
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-star-fill text-warning me-1"></i>
+                            <span class="fw-bold">@Model.Rating</span>
+                        </div>
+                    </div>
+
+                    <hr class="text-muted opacity-25 mb-4" />
+
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger p-2 small">
+                            @TempData["Error"]
+                        </div>
+                    }
+
+                    <!-- Real Booking Form -->
+                    <form asp-controller="Property" asp-action="Reserve" method="post">
+
+                        <input type="hidden" name="PropertyId" value="@Model.Id" />
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label fw-bold small">CHECK-IN</label>
+                                <input type="date" name="CheckIn" class="form-control" required />
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-bold small">CHECKOUT</label>
+                                <input type="date" name="CheckOut" class="form-control" required />
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small">GUESTS</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="bi bi-person"></i></span>
+                                <input type="number"
+                                       name="GuestsCount"
+                                       class="form-control"
+                                       value="1"
+                                       min="1"
+                                       max="@Model.MaxGuests"
+                                       required />
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-3 fw-bold rounded-3 fs-5">
+                            Reserve Now
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <small class="text-muted">You won't be charged yet</small>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

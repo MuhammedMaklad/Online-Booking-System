@@ -1,64 +1,670 @@
-@model Online_Booking_System.ViewModels.EditProfileViewModel
+﻿@model Online_Booking_System.Models.Properties.Property
 
 @{
-    ViewData["Title"] = "Edit Profile";
+    ViewData["Title"] = Model.Title;
 }
 
-<div class="row justify-content-center fade-in">
-    <div class="col-md-8">
-        <div class="card border-0 shadow-sm p-4">
-            <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-                <h2 class="fw-bold text-primary mb-0">Edit Profile</h2>
-                <a asp-action="Profile" class="btn btn-outline-secondary btn-sm">Back to Profile</a>
+<div class="container-xl py-4">
+
+    <!-- Breadcrumb -->
+    <nav class="d-flex align-items-center gap-2 mb-4" style="font-size:13px;">
+        <a href="/" class="text-decoration-none text-secondary">Home</a>
+        <i class="bi bi-chevron-right" style="font-size:11px;color:#d1d5db;"></i>
+        <a href="/Property" class="text-decoration-none text-secondary">Properties</a>
+        <i class="bi bi-chevron-right" style="font-size:11px;color:#d1d5db;"></i>
+        <span class="fw-semibold">@Model.Title</span>
+    </nav>
+
+    <div class="row g-4">
+
+        <!-- ============================
+             LEFT COLUMN
+        ============================= -->
+        <div class="col-lg-8">
+
+            <!-- Main Image -->
+            <img src="@Model.ImageUrl"
+                 alt="@Model.Title"
+                 class="w-100 rounded-4 mb-3"
+                 style="height:420px; object-fit:cover; display:block;" />
+
+            <!-- Thumbnail Row -->
+            <div class="row g-2 mb-4">
+                <div class="col-4">
+                    <div class="det-thumb"><i class="bi bi-image"></i></div>
+                </div>
+                <div class="col-4">
+                    <div class="det-thumb"><i class="bi bi-image"></i></div>
+                </div>
+                <div class="col-4">
+                    <div class="det-thumb det-thumb-more">
+                        <span><i class="bi bi-grid-3x3-gap-fill me-1"></i>+6 photos</span>
+                    </div>
+                </div>
             </div>
 
-            <form asp-action="EditProfile" method="post">
-                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-floating mb-3">
-                            <input asp-for="FirstName" class="form-control" placeholder="John" />
-                            <label asp-for="FirstName">First Name</label>
-                            <span asp-validation-for="FirstName" class="text-danger small"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-floating mb-3">
-                            <input asp-for="LastName" class="form-control" placeholder="Doe" />
-                            <label asp-for="LastName">Last Name</label>
-                            <span asp-validation-for="LastName" class="text-danger small"></span>
-                        </div>
+            <!-- Title + Location + Rating -->
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-size:28px;">@Model.Title</h1>
+                    <p class="text-secondary mb-0">
+                        <i class="bi bi-geo-alt-fill text-primary me-1"></i>
+                        @Model.City, @Model.Country
+                    </p>
+                </div>
+                <div class="text-end">
+                    <div style="color:#f59e0b; font-size:18px; letter-spacing:2px;">★★★★★</div>
+                    <div style="font-size:14px; font-weight:700;">
+                        4.8 <span class="text-secondary fw-normal">· 124 reviews</span>
                     </div>
                 </div>
+            </div>
 
-                <div class="form-floating mb-3">
-                    <input asp-for="PhoneNumber" class="form-control" placeholder="1234567890" />
-                    <label asp-for="PhoneNumber">Phone Number</label>
-                    <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+            <!-- Badges -->
+            <div class="d-flex flex-wrap gap-2 mb-4">
+                <span class="det-badge det-badge-bed">
+                    <i class="bi bi-door-open-fill"></i> @Model.Bedrooms Bedrooms
+                </span>
+                <span class="det-badge det-badge-bath">
+                    <i class="bi bi-droplet-fill"></i> @Model.Bathrooms Bathrooms
+                </span>
+                <span class="det-badge det-badge-guest">
+                    <i class="bi bi-people-fill"></i> @Model.MaxGuests Guests
+                </span>
+                <span class="det-badge det-badge-type">
+                    <i class="bi bi-house-fill"></i> Villa
+                </span>
+            </div>
+
+            <!-- Description -->
+            <div class="det-card mb-4">
+                <h3 class="det-section-title">
+                    <i class="bi bi-file-text-fill"></i> About this place
+                </h3>
+                <p class="text-secondary mb-0" style="font-size:15px; line-height:1.85;">
+                    @Model.Description
+                </p>
+            </div>
+
+            <!-- ===== FACILITIES ===== -->
+            <div class="det-card mb-4">
+                <h3 class="det-section-title">
+                    <i class="bi bi-stars"></i> What this place offers
+                </h3>
+                <div class="row g-2">
+                    <div class="col-6">
+                        <div class="det-facility">
+                            <i class="bi bi-wifi"></i> Free Wifi
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="det-facility">
+                            <i class="bi bi-car-front-fill"></i> Free Parking
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="det-facility">
+                            <i class="bi bi-water"></i> Swimming Pool
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="det-facility">
+                            <i class="bi bi-cup-hot-fill"></i> Breakfast Included
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="det-facility">
+                            <i class="bi bi-tree-fill"></i> Garden View
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="det-facility">
+                            <i class="bi bi-tv-fill"></i> Smart TV
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="det-facility">
+                            <i class="bi bi-snow2"></i> Air Conditioning
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="det-facility">
+                            <i class="bi bi-wind"></i> Sea View
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== REVIEWS ===== -->
+            <div class="det-card mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="det-section-title mb-0">
+                        <i class="bi bi-chat-quote-fill"></i> Guest Reviews
+                    </h3>
+                    <div class="d-flex align-items-center gap-1">
+                        <span style="color:#f59e0b; font-size:22px;">★</span>
+                        <span class="fw-bold" style="font-size:20px;">4.8</span>
+                        <span class="text-secondary" style="font-size:13px;">· 124 reviews</span>
+                    </div>
                 </div>
 
-                <div class="form-floating mb-3">
-                    <input asp-for="AvatarUrl" class="form-control" placeholder="https://example.com/avatar.jpg" />
-                    <label asp-for="AvatarUrl">Avatar URL</label>
-                    <span asp-validation-for="AvatarUrl" class="text-danger small"></span>
+                <!-- Review 1 -->
+                <div class="det-review-item">
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <div class="det-avatar det-av-blue">JS</div>
+                        <div class="flex-grow-1">
+                            <div class="fw-semibold" style="font-size:14px;">John Smith</div>
+                            <div class="text-secondary" style="font-size:12px;">April 2025</div>
+                        </div>
+                        <div class="det-review-stars">★★★★★</div>
+                    </div>
+                    <p class="mb-0 text-secondary" style="font-size:14px; line-height:1.65;">
+                        Amazing place, very clean and comfortable. The beach view from the terrace was absolutely breathtaking. Will definitely come back!
+                    </p>
                 </div>
 
-                <div class="form-floating mb-4">
-                    <textarea asp-for="Bio" class="form-control" style="height: 100px" placeholder="Tell us about yourself"></textarea>
-                    <label asp-for="Bio">Bio</label>
-                    <span asp-validation-for="Bio" class="text-danger small"></span>
+                <!-- Review 2 -->
+                <div class="det-review-item" style="border-bottom:none; margin-bottom:0; padding-bottom:0;">
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <div class="det-avatar det-av-green">SJ</div>
+                        <div class="flex-grow-1">
+                            <div class="fw-semibold" style="font-size:14px;">Sarah Johnson</div>
+                            <div class="text-secondary" style="font-size:12px;">March 2025</div>
+                        </div>
+                        <div class="det-review-stars">★★★★☆</div>
+                    </div>
+                    <p class="mb-0 text-secondary" style="font-size:14px; line-height:1.65;">
+                        Great location and beautiful sea view. The pool was fantastic and the host was very responsive. Highly recommended for families.
+                    </p>
                 </div>
+            </div>
 
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary px-4">Save Changes</button>
-                    <a asp-action="Profile" class="btn btn-light px-4">Cancel</a>
+            <!-- ===== MAP ===== -->
+            <div class="det-card mb-4">
+                <h3 class="det-section-title">
+                    <i class="bi bi-map-fill"></i> Location
+                </h3>
+                <div class="rounded-3 overflow-hidden border">
+                    <iframe src="https://maps.google.com/maps?q=@Model.City&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                            width="100%"
+                            height="340"
+                            style="border:0;"
+                            loading="lazy">
+                    </iframe>
                 </div>
-            </form>
+                <p class="text-secondary mt-2 mb-0" style="font-size:13px;">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Exact location provided after booking confirmation
+                </p>
+            </div>
+
         </div>
+
+        <!-- ============================
+             RIGHT COLUMN — BOOKING CARD
+        ============================= -->
+        <div class="col-lg-4">
+            <div class="det-booking-sidebar">
+
+                <!-- Main Booking Card -->
+                <div class="det-booking-card">
+
+                    <!-- Price + Rating -->
+                    <div class="det-bk-header">
+                        <div class="d-flex align-items-baseline gap-2 mb-1">
+                            <span class="det-bk-price">$@Model.PricePerNight</span>
+                            <span class="text-secondary" style="font-size:16px;">/ night</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-1" style="font-size:14px;">
+                            <i class="bi bi-star-fill" style="color:#f59e0b; font-size:13px;"></i>
+                            <strong>4.8</strong>
+                            <span class="text-secondary">· 124 reviews</span>
+                        </div>
+                    </div>
+
+                    <!-- Form -->
+                    <div class="det-bk-form">
+
+                        <!-- Check In / Check Out -->
+                        <div class="det-dates-box mb-3">
+                            <div class="det-date-field" style="border-right: 1px solid #e5e7eb;">
+                                <label class="det-bk-label">CHECK IN</label>
+                                <input type="date" id="checkIn" class="det-date-input" onchange="calcTotal()" />
+                            </div>
+                            <div class="det-date-field">
+                                <label class="det-bk-label">CHECK OUT</label>
+                                <input type="date" id="checkOut" class="det-date-input" onchange="calcTotal()" />
+                            </div>
+                        </div>
+
+                        <!-- Guests -->
+                        <div class="det-guests-box mb-4">
+                            <div>
+                                <label class="det-bk-label">GUESTS</label>
+                                <div id="guestLabel" style="font-size:14px; font-weight:600;">2 guests</div>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <button class="det-guest-btn" onclick="changeGuests(-1)" type="button">−</button>
+                                <span id="guestNum" style="font-size:16px; font-weight:700; min-width:20px; text-align:center;">2</span>
+                                <button class="det-guest-btn" onclick="changeGuests(1)" type="button">+</button>
+                            </div>
+                        </div>
+
+                        <button class="det-reserve-btn w-100" type="button">Reserve Now</button>
+                        <p class="text-center text-secondary mt-2 mb-0" style="font-size:12px;">
+                            You won't be charged yet
+                        </p>
+                    </div>
+
+                    <!-- Price Breakdown -->
+                    <div class="det-bk-breakdown">
+                        <div class="d-flex justify-content-between mb-2" style="font-size:14px;">
+                            <span class="text-secondary" id="nightsLabel">$@Model.PricePerNight × 5 nights</span>
+                            <span class="fw-semibold" id="nightsTotal">$@(Model.PricePerNight * 5)</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2" style="font-size:14px;">
+                            <span class="text-secondary">Cleaning fee</span>
+                            <span class="fw-semibold">$150</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2" style="font-size:14px;">
+                            <span class="text-secondary">Service fee</span>
+                            <span class="fw-semibold">$350</span>
+                        </div>
+                        <div class="d-flex justify-content-between pt-3" style="border-top:1px solid #e5e7eb; margin-top:6px;">
+                            <span style="font-size:16px; font-weight:800;">Total</span>
+                            <span style="font-size:18px; font-weight:800;" id="grandTotal">$@(Model.PricePerNight * 5 + 500)</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Host Card -->
+                <div class="det-host-card">
+                    <div class="det-host-avatar">AH</div>
+                    <div class="flex-grow-1">
+                        <div class="fw-bold" style="font-size:15px;">Ahmed Hassan</div>
+                        <div class="text-secondary" style="font-size:12px;">Host since 2021 · Superhost ✦</div>
+                    </div>
+                    <button class="det-contact-btn" type="button">
+                        <i class="bi bi-chat-dots-fill me-1"></i> Contact
+                    </button>
+                </div>
+
+                <!-- Trust -->
+                <div class="text-center text-secondary mt-2" style="font-size:12px;">
+                    <i class="bi bi-shield-fill-check text-success me-1"></i>
+                    Your booking is protected by BookingSystem
+                </div>
+
+            </div>
+        </div>
+
     </div>
 </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+<!-- ===========================
+     STYLES
+=========================== -->
+<style>
+
+    body {
+        background: #f0f2f5 !important;
+    }
+
+    /* Thumbnails */
+    .det-thumb {
+        height: 110px;
+        background: #e2e8f0;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #94a3b8;
+        font-size: 22px;
+    }
+
+    .det-thumb-more {
+        background: rgba(17,24,39,0.50);
+        color: white;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    /* Badges */
+    .det-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 8px 18px;
+        border-radius: 100px;
+        font-size: 13px;
+        font-weight: 600;
+        border: 1.5px solid;
+    }
+
+    .det-badge-bed {
+        background: #eff6ff;
+        color: #1d4ed8;
+        border-color: #bfdbfe;
+    }
+
+    .det-badge-bath {
+        background: #f0fdf4;
+        color: #15803d;
+        border-color: #bbf7d0;
+    }
+
+    .det-badge-guest {
+        background: #fff7ed;
+        color: #c2410c;
+        border-color: #fed7aa;
+    }
+
+    .det-badge-type {
+        background: #f5f3ff;
+        color: #7c3aed;
+        border-color: #ddd6fe;
+    }
+
+    /* Section Card */
+    .det-card {
+        background: #ffffff;
+        border-radius: 18px;
+        border: 1px solid #e5e7eb;
+        padding: 26px;
+    }
+
+    .det-section-title {
+        font-size: 17px;
+        font-weight: 700;
+        color: #111827;
+        margin: 0 0 18px;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+    }
+
+        .det-section-title i {
+            color: #2563eb;
+            font-size: 18px;
+        }
+
+    /* Facility Item */
+    .det-facility {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 18px;
+        border-radius: 12px;
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        font-size: 14px;
+        font-weight: 500;
+        color: #374151;
+        transition: all .2s;
+    }
+
+        .det-facility:hover {
+            background: #eff6ff;
+            border-color: #93c5fd;
+            transform: translateY(-2px);
+        }
+
+        .det-facility i {
+            color: #2563eb;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+    /* Review Item */
+    .det-review-item {
+        padding-bottom: 18px;
+        margin-bottom: 18px;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .det-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .det-av-blue {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .det-av-green {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .det-review-stars {
+        color: #f59e0b;
+        font-size: 14px;
+        letter-spacing: 1px;
+    }
+
+    /* ==============================
+           BOOKING SIDEBAR
+        ============================== */
+    .det-booking-sidebar {
+        position: sticky;
+        top: 24px;
+    }
+
+    .det-booking-card {
+        background: #ffffff;
+        border-radius: 22px;
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+        margin-bottom: 16px;
+    }
+
+    .det-bk-header {
+        padding: 24px 26px 20px;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .det-bk-price {
+        font-size: 34px;
+        font-weight: 800;
+        color: #1d4ed8;
+        line-height: 1;
+    }
+
+    .det-bk-form {
+        padding: 22px 26px 20px;
+    }
+
+    /* Dates Box */
+    .det-dates-box {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        border: 1.5px solid #d1d5db;
+        border-radius: 14px;
+        overflow: hidden;
+        transition: border-color .2s;
+    }
+
+        .det-dates-box:focus-within {
+            border-color: #2563eb;
+        }
+
+    .det-date-field {
+        padding: 12px 16px;
+    }
+
+    .det-bk-label {
+        display: block;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: .08em;
+        color: #9ca3af;
+        margin-bottom: 4px;
+    }
+
+    .det-date-input {
+        width: 100%;
+        border: none;
+        background: transparent;
+        font-size: 14px;
+        font-weight: 600;
+        color: #111827;
+        outline: none;
+        cursor: pointer;
+        font-family: inherit;
+        padding: 0;
+    }
+
+    /* Guests Box */
+    .det-guests-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border: 1.5px solid #d1d5db;
+        border-radius: 14px;
+        padding: 12px 16px;
+    }
+
+    .det-guest-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 1.5px solid #d1d5db;
+        background: transparent;
+        font-size: 18px;
+        color: #374151;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all .15s;
+        padding: 0;
+        line-height: 1;
+    }
+
+        .det-guest-btn:hover {
+            border-color: #2563eb;
+            color: #2563eb;
+            background: #eff6ff;
+        }
+
+    /* Reserve Button */
+    .det-reserve-btn {
+        padding: 16px;
+        border-radius: 14px;
+        background: #2563eb;
+        color: white;
+        border: none;
+        font-size: 16px;
+        font-weight: 700;
+        font-family: inherit;
+        cursor: pointer;
+        transition: all .2s ease;
+    }
+
+        .det-reserve-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(37,99,235,0.35);
+        }
+
+    /* Price Breakdown */
+    .det-bk-breakdown {
+        padding: 18px 26px 22px;
+        border-top: 1px solid #f3f4f6;
+    }
+
+    /* Host Card */
+    .det-host-card {
+        background: #ffffff;
+        border-radius: 18px;
+        border: 1px solid #e5e7eb;
+        padding: 18px 20px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 12px;
+    }
+
+    .det-host-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 800;
+        color: #1d4ed8;
+        flex-shrink: 0;
+    }
+
+    .det-contact-btn {
+        padding: 9px 14px;
+        border-radius: 10px;
+        border: 1.5px solid #d1d5db;
+        background: transparent;
+        font-size: 13px;
+        font-weight: 600;
+        color: #374151;
+        cursor: pointer;
+        font-family: inherit;
+        white-space: nowrap;
+        transition: all .15s;
+    }
+
+        .det-contact-btn:hover {
+            border-color: #2563eb;
+            color: #1d4ed8;
+            background: #eff6ff;
+        }
+
+    @@media (max-width: 991px) {
+        .det-booking-sidebar {
+            position: static;
+        }
+    }
+
+</style>
+
+<!-- ===========================
+     SCRIPTS
+=========================== -->
+<script>
+    let guests = 2;
+    const pricePerNight = @Model.PricePerNight;
+
+    function changeGuests(delta) {
+        guests = Math.max(1, Math.min(@Model.MaxGuests, guests + delta));
+        document.getElementById('guestNum').textContent = guests;
+        document.getElementById('guestLabel').textContent = guests + (guests === 1 ? ' guest' : ' guests');
+    }
+
+    function calcTotal() {
+        const checkIn  = document.getElementById('checkIn').value;
+        const checkOut = document.getElementById('checkOut').value;
+        if (!checkIn || !checkOut) return;
+
+        const nights = Math.ceil((new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24));
+        if (nights <= 0) return;
+
+        const nightsTotal = pricePerNight * nights;
+        const grand = nightsTotal + 150 + 350;
+
+        document.getElementById('nightsLabel').textContent =
+            '$' + pricePerNight.toLocaleString() + ' \u00D7 ' + nights + ' night' + (nights > 1 ? 's' : '');
+        document.getElementById('nightsTotal').textContent = '$' + nightsTotal.toLocaleString();
+        document.getElementById('grandTotal').textContent  = '$' + grand.toLocaleString();
+    }
+</script>

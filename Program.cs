@@ -44,8 +44,10 @@ namespace Online_Booking_System
 
       builder.Services.AddScoped<IEmailService, EmailService>();
       builder.Services.AddScoped<IUserService, UserService>();
+      builder.Services.AddScoped<IPropertyService, PropertyService>();
+            builder.Services.AddScoped<IBookingService, BookingService>();
 
-      builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews();
 
       var app = builder.Build();
 
