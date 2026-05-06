@@ -1,0 +1,42 @@
+@model Online_Booking_System.ViewModels.LinkExternalLoginViewModel
+
+@{
+    ViewData["Title"] = "Link External Account";
+}
+
+<div class="row justify-content-center fade-in">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-lg p-4 text-center">
+            <div class="mb-4">
+                <div class="bg-primary-subtle text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-google" viewBox="0 0 16 16">
+                        <path d="M15.545 6.558a9.42 9.42 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0c2.158 0 3.978.708 5.294 2.136l-2.393 2.135C10.04 3.42 9.11 3.015 8 3.015c-2.757 0-4.993 2.333-4.993 5.204a5.105 5.105 0 0 0 5.19 5.204c3.193 0 4.38-2.285 4.57-3.466H8V6.558h7.545z"/>
+                    </svg>
+                </div>
+                <h2 class="fw-bold text-primary">Link External Account</h2>
+                <p class="text-muted">Successfully authenticated with <strong>@ViewBag.Provider</strong>.</p>
+            </div>
+
+            <div class="card bg-light border-0 mb-4 text-start">
+                <div class="card-body">
+                    <p class="mb-0">Please confirm your email address to link this Google account to your existing profile.</p>
+                </div>
+            </div>
+
+            <form asp-action="LinkExternalLogin" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="form-floating mb-4 text-start">
+                    <input asp-for="Email" class="form-control" placeholder="name@example.com" readonly />
+                    <label asp-for="Email">Email Address</label>
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg">Link Account</button>
+                    <a asp-action="Login" class="btn btn-link text-decoration-none text-muted">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

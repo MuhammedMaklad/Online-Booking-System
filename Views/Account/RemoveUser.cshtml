@@ -1,0 +1,41 @@
+@model Online_Booking_System.ViewModels.RemoveUserViewModel
+
+@{
+    ViewData["Title"] = "Remove User";
+}
+
+<div class="row justify-content-center fade-in">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-lg p-4 text-center">
+            <div class="mb-4">
+                <div class="bg-danger text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow-sm" style="width: 80px; height: 80px;">
+                    <i class="bi bi-person-x-fill" style="font-size: 2.5rem;"></i>
+                </div>
+                <h2 class="fw-bold text-danger">Remove User?</h2>
+                <p class="text-muted">You are about to permanently delete this user account. This action cannot be undone and will remove all associated data.</p>
+            </div>
+
+            <div class="card bg-light border-0 mb-4 text-start">
+                <div class="card-body">
+                    <div class="row mb-2">
+                        <div class="col-sm-4 text-muted small">Target User</div>
+                        <div class="col-sm-8 fw-bold">@ViewBag.User.FirstName @ViewBag.User.LastName</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4 text-muted small">Email Address</div>
+                        <div class="col-sm-8 fw-semibold">@ViewBag.User.Email</div>
+                    </div>
+                </div>
+            </div>
+
+            <form asp-action="RemoveUser" method="post">
+                <input type="hidden" asp-for="UserId" />
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-danger btn-lg flex-grow-1 fw-semibold">Confirm Deletion</button>
+                    <a asp-action="Users" class="btn btn-light btn-lg flex-grow-1 fw-semibold">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

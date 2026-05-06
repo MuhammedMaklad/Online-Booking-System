@@ -93,3 +93,4 @@ _Chutzpah*
 !.env.example
 
 # End of standard Visual Studio ignore
+appsettings.*.json

@@ -1,0 +1,259 @@
+@model Online_Booking_System.ViewModels.UserListViewModel
+
+@{
+    ViewData["Title"] = "User Management";
+}
+
+@functions {
+    string GetSortUrl(string sortBy) {
+        var nextOrder = (Model.Filter.SortBy?.ToLower() == sortBy.ToLower() && Model.Filter.SortOrder?.ToLower() == "asc") ? "desc" : "asc";
+        return Url.Action("Users", new { 
+            Search = Model.Filter.Search, 
+            Role = Model.Filter.Role, 
+            IsActive = Model.Filter.IsActive,
+            SortBy = sortBy,
+            SortOrder = nextOrder,
+            Page = Model.Page
+        })!;
+    }
+
+    string GetSortIcon(string sortBy) {
+        if (Model.Filter.SortBy?.ToLower() != sortBy.ToLower()) return "bi-arrow-down-up text-muted opacity-50";
+        return Model.Filter.SortOrder?.ToLower() == "asc" ? "bi-arrow-up text-primary" : "bi-arrow-down text-primary";
+    }
+}
+
+<div class="container fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-primary mb-0">User Management</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item small"><a asp-controller="Home" asp-action="Index" class="text-decoration-none">Home</a></li>
+                    <li class="breadcrumb-item small active" aria-current="page">Users</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="text-end">
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill">
+                <i class="bi bi-people-fill me-1"></i> Total: @Model.TotalCount
+            </span>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card border-0 shadow-sm p-4 mb-4">
+        <form asp-action="Users" method="get" id="filterForm">
+            <input type="hidden" name="SortBy" value="@Model.Filter.SortBy" />
+            <input type="hidden" name="SortOrder" value="@Model.Filter.SortOrder" />
+            
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label small fw-semibold text-muted">Search Users</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
+                        <input name="Search" value="@Model.Filter.Search" class="form-control border-start-0 bg-light" placeholder="Name or email..." />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold text-muted">Role</label>
+                    <select name="Role" class="form-select bg-light" onchange="this.form.submit()">
+                        <option value="">All Roles</option>
+                        <option value="Admin" selected="@(Model.Filter.Role == "Admin")">Admin</option>
+                        <option value="User" selected="@(Model.Filter.Role == "User")">User</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold text-muted">Status</label>
+                    <select name="IsActive" class="form-select bg-light" onchange="this.form.submit()">
+                        <option value="">All Status</option>
+                        <option value="true" selected="@(Model.Filter.IsActive == true)">Active</option>
+                        <option value="false" selected="@(Model.Filter.IsActive == false)">Inactive</option>
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary flex-grow-1 fw-semibold">
+                        <i class="bi bi-funnel-fill me-1"></i> Filter
+                    </button>
+                    <a asp-action="Users" class="btn btn-outline-secondary" title="Clear Filters">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="card border-0 shadow-sm overflow-hidden mb-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr class="text-muted small text-uppercase fw-bold">
+                        <th class="ps-4 py-3 border-0" style="width: 35%">
+                            <a href="@GetSortUrl("firstname")" class="text-decoration-none text-muted d-flex align-items-center gap-1">
+                                User <i class="@GetSortIcon("firstname")"></i>
+                            </a>
+                        </th>
+                        <th class="border-0">Roles</th>
+                        <th class="border-0">Status</th>
+                        <th class="border-0">
+                            <a href="@GetSortUrl("createdat")" class="text-decoration-none text-muted d-flex align-items-center gap-1">
+                                Joined <i class="@GetSortIcon("createdat")"></i>
+                            </a>
+                        </th>
+                        <th class="text-end pe-4 border-0">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="border-top-0">
+                    @if (!Model.Users.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <div class="mb-3 text-muted opacity-25">
+                                    <i class="bi bi-people" style="font-size: 4rem;"></i>
+                                </div>
+                                <h5 class="fw-bold text-muted">No users found</h5>
+                                <p class="text-muted small mb-4">Try adjusting your filters or search terms</p>
+                                <a asp-action="Users" class="btn btn-primary btn-sm rounded-pill px-4">Clear all filters</a>
+                            </td>
+                        </tr>
+                    }
+                    @foreach (var user in Model.Users)
+                    {
+                        <tr>
+                            <td class="ps-4 py-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm" style="width: 42px; height: 42px; font-weight: 700; font-size: 0.9rem;">
+                                        @(user.FirstName?[0])@(user.LastName?[0])
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark">@user.FirstName @user.LastName</div>
+                                        <div class="small text-muted d-flex align-items-center">
+                                            <i class="bi bi-envelope small me-1"></i> @user.Email
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                @foreach (var role in user.Roles)
+                                {
+                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle me-1 fw-medium" style="font-size: 0.75rem;">@role</span>
+                                }
+                            </td>
+                            <td>
+                                @if (user.IsActive)
+                                {
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3">
+                                        <i class="bi bi-check-circle-fill small me-1"></i> Active
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-3">
+                                        <i class="bi bi-x-circle-fill small me-1"></i> Inactive
+                                    </span>
+                                }
+                            </td>
+                            <td class="small text-muted">
+                                <i class="bi bi-calendar3 me-1"></i> @user.CreatedAt.ToString("MMM dd, yyyy")
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="d-flex justify-content-end gap-2">
+                                    @if (user.IsActive)
+                                    {
+                                        <a asp-action="SetActiveStatus" asp-route-userId="@user.Id" class="btn btn-outline-warning btn-sm border-0" title="Deactivate User">
+                                            <i class="bi bi-person-dash-fill"></i>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a asp-action="SetActiveStatus" asp-route-userId="@user.Id" class="btn btn-outline-success btn-sm border-0" title="Activate User">
+                                            <i class="bi bi-person-check-fill"></i>
+                                        </a>
+                                    }
+                                    
+                                    <div class="dropdown">
+                                        <button class="btn btn-primary btn-sm rounded-pill px-3 d-flex align-items-center gap-1 shadow-sm" type="button" data-bs-toggle="dropdown">
+                                            <i class="bi bi-shield-lock"></i> Roles
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3 p-2">
+                                            <li><h6 class="dropdown-header small text-uppercase fw-bold text-primary opacity-75">Modify Roles</h6></li>
+                                            <li>
+                                                <a asp-action="AssignRole" asp-route-userId="@user.Id" class="dropdown-item rounded-2 d-flex align-items-center gap-2 py-2">
+                                                    <i class="bi bi-plus-circle text-primary"></i>
+                                                    <span>Assign New Role</span>
+                                                </a>
+                                            </li>
+                                            @if (user.Roles.Any())
+                                            {
+                                                <li><hr class="dropdown-divider opacity-50"></li>
+                                                <li><h6 class="dropdown-header small text-uppercase fw-bold text-danger opacity-75">Revoke Access</h6></li>
+                                                foreach (var role in user.Roles)
+                                                {
+                                                    <li>
+                                                        <a asp-action="RevokeRole" asp-route-userId="@user.Id" asp-route-role="@role" class="dropdown-item rounded-2 d-flex align-items-center gap-2 py-2 text-danger">
+                                                            <i class="bi bi-shield-x"></i>
+                                                            <span>Remove @role</span>
+                                                        </a>
+                                                    </li>
+                                                }
+                                            }
+                                        </ul>
+                                    </div>
+
+                                    <a asp-action="RemoveUser" asp-route-userId="@user.Id" class="btn btn-outline-danger btn-sm border-0" title="Delete User">
+                                        <i class="bi bi-trash3-fill"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        
+        @if (Model.TotalPages > 1)
+        {
+            <div class="card-footer bg-white border-top py-3">
+                <nav aria-label="User list navigation">
+                    <ul class="pagination pagination-sm justify-content-center mb-0 gap-1">
+                        <li class="page-item @(Model.Page == 1 ? "disabled" : "")">
+                            <a class="page-link border-0 rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" 
+                               href="@Url.Action("Users", new { Page = Model.Page - 1, Search = Model.Filter.Search, Role = Model.Filter.Role, IsActive = Model.Filter.IsActive, SortBy = Model.Filter.SortBy, SortOrder = Model.Filter.SortOrder })">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+                        
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(Model.Page == i ? "active" : "")">
+                                <a class="page-link border-0 rounded-circle d-flex align-items-center justify-content-center mx-1 @(Model.Page == i ? "shadow-sm" : "")" style="width: 32px; height: 32px;"
+                                   href="@Url.Action("Users", new { Page = i, Search = Model.Filter.Search, Role = Model.Filter.Role, IsActive = Model.Filter.IsActive, SortBy = Model.Filter.SortBy, SortOrder = Model.Filter.SortOrder })">@i</a>
+                            </li>
+                        }
+                        
+                        <li class="page-item @(Model.Page == Model.TotalPages ? "disabled" : "")">
+                            <a class="page-link border-0 rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;"
+                               href="@Url.Action("Users", new { Page = Model.Page + 1, Search = Model.Filter.Search, Role = Model.Filter.Role, IsActive = Model.Filter.IsActive, SortBy = Model.Filter.SortBy, SortOrder = Model.Filter.SortOrder })">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        }
+    </div>
+</div>

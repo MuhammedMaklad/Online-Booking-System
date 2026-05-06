@@ -1,0 +1,36 @@
+@model Online_Booking_System.ViewModels.SetActiveStatusViewModel
+
+@{
+    ViewData["Title"] = "Set Active Status";
+}
+
+<div class="row justify-content-center fade-in">
+    <div class="col-md-5">
+        <div class="card border-0 shadow-lg p-4 text-center">
+            <div class="mb-4">
+                <div class="bg-warning-subtle text-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-person-gear" viewBox="0 0 16 16">
+                        <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm.002 6a6.7 6.7 0 0 1 5.059-2.454c-.337-.357-.77-.56-1.281-.56a1.5 1.5 0 1 0 0 3c.441 0 .821-.21 1.074-.533.033.01.066.02.1.03a6.7 6.7 0 0 1-5.051 2.511c-1.277.03-2.534-.487-3.464-1.478A5.927 5.927 0 0 1 2 10c0-1.615.823-3.023 2.074-3.891l-.564-1.218A7.027 7.027 0 0 0 0 10c0 3.866 3.134 7 7 7a7.09 7.09 0 0 0 1.002-.071Z"/>
+                        <path d="M15.5 14a.5.5 0 0 1 .5.5V15h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1h.5v-.5a.5.5 0 0 1 .5-.5ZM13 14a.5.5 0 0 1 .5.5V15h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1h.5v-.5a.5.5 0 0 1 .5-.5ZM12.854 12.146a.5.5 0 0 1 0 .708l-1 1a.5.5 0 0 1-.708 0l-1-1a.5.5 0 0 1 .708-.708l.646.647V10.5a.5.5 0 0 1 1 0v2.293l.646-.647a.5.5 0 0 1 .708 0Z"/>
+                    </svg>
+                </div>
+                <h2 class="fw-bold text-primary">Confirm Status Change</h2>
+                <p class="text-muted">You are about to change a user's account status.</p>
+            </div>
+
+            <div class="alert @(Model.IsActive ? "alert-success" : "alert-warning") mb-4">
+                Are you sure you want to <strong>@(Model.IsActive ? "activate" : "deactivate")</strong> this user?
+            </div>
+
+            <form asp-action="SetActiveStatus" method="post">
+                <input type="hidden" asp-for="UserId" />
+                <input type="hidden" asp-for="IsActive" />
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg flex-grow-1">Confirm Change</button>
+                    <a asp-action="Users" class="btn btn-light btn-lg flex-grow-1">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
