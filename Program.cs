@@ -31,13 +31,13 @@ namespace Online_Booking_System
         .AddEntityFrameworkStores<AppDbContext>()
         .AddDefaultTokenProviders();
 
-      builder.Services.AddAuthentication()
-        .AddGoogle(options =>
-        {
-          options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? "";
-          options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? "";
-          options.CallbackPath = "/signin-google";
-        });
+      //builder.Services.AddAuthentication()
+      //  .AddGoogle(options =>
+      //  {
+      //    options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? "";
+      //    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? "";
+      //    options.CallbackPath = "/signin-google";
+      //  });
 
       builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("Smtp"));
       builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
