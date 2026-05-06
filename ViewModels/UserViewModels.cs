@@ -7,8 +7,12 @@ namespace Online_Booking_System.ViewModels
     [Required, EmailAddress]
     public string Email { get; set; } = string.Empty;
 
-    [Required, MinLength(6)]
-    public string Password { get; set; } = string.Empty;
+
+        [Required]
+        [MinLength(6)]
+        [RegularExpression(@"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$",
+    ErrorMessage = "Password must be at least 6 characters and contain one uppercase letter, one lowercase letter, and one digit.")]
+        public string Password { get; set; } = string.Empty;
 
     [Required, MaxLength(50)]
     public string FirstName { get; set; } = string.Empty;

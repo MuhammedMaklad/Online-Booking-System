@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 namespace Online_Booking_System.Controllers
 {
+    [Authorize]
     public class PropertyController : Controller
     {
         private readonly IPropertyService _propertyService;
