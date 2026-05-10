@@ -340,6 +340,9 @@ namespace Online_Booking_System.Migrations
                     b.Property<int>("MaxGuests")
                         .HasColumnType("int");
 
+                    b.Property<string>("OwnerId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<decimal>("PricePerNight")
                         .HasColumnType("decimal(18,2)");
 
@@ -355,6 +358,8 @@ namespace Online_Booking_System.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("Properties");
                 });
@@ -427,6 +432,16 @@ namespace Online_Booking_System.Migrations
                     b.Navigation("Property");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Online_Booking_System.Models.Properties.Property", b =>
+                {
+                    b.HasOne("Online_Booking_System.Models.ApplicationUser", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Owner");
                 });
 #pragma warning restore 612, 618
         }

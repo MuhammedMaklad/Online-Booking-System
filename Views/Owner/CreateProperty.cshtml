@@ -1,0 +1,172 @@
+@model Online_Booking_System.ViewModels.CreatePropertyViewModel
+
+@{
+    ViewData["Title"] = "Add New Property";
+}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+
+            <div class="d-flex align-items-center gap-3 mb-4">
+                <a asp-action="MyProperties" class="btn btn-outline-secondary rounded-circle p-2 lh-1">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+                <div>
+                    <h2 class="fw-bold mb-0">Add New Property</h2>
+                    <p class="text-muted mb-0">Fill in the details to list your property</p>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4 p-lg-5">
+
+                    <form asp-action="CreateProperty" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <!-- Basic Info -->
+                        <h5 class="fw-bold mb-3 text-primary">
+                            <i class="bi bi-info-circle me-2"></i>Basic Information
+                        </h5>
+
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label fw-semibold"></label>
+                            <input asp-for="Title" class="form-control" placeholder="e.g. Cozy Beach House" />
+                            <span asp-validation-for="Title" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-semibold"></label>
+                            <textarea asp-for="Description" class="form-control" rows="4"
+                                      placeholder="Describe your property..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Facilities" class="form-label fw-semibold">
+                                Facilities
+                                <small class="text-muted fw-normal">(comma-separated, e.g. WiFi, Pool, Parking)</small>
+                            </label>
+                            <input asp-for="Facilities" class="form-control" placeholder="WiFi, Pool, Air Conditioning" />
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <!-- Location -->
+                        <h5 class="fw-bold mb-3 text-primary">
+                            <i class="bi bi-geo-alt me-2"></i>Location
+                        </h5>
+
+                        <div class="mb-3">
+                            <label asp-for="Address" class="form-label fw-semibold"></label>
+                            <input asp-for="Address" class="form-control" placeholder="Full address" />
+                            <span asp-validation-for="Address" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="City" class="form-label fw-semibold"></label>
+                                <input asp-for="City" class="form-control" placeholder="City" />
+                                <span asp-validation-for="City" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Country" class="form-label fw-semibold"></label>
+                                <input asp-for="Country" class="form-control" placeholder="Country" />
+                                <span asp-validation-for="Country" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="GoogleMapUrl" class="form-label fw-semibold">
+                                Google Maps Embed URL
+                                <small class="text-muted fw-normal">(optional)</small>
+                            </label>
+                            <input asp-for="GoogleMapUrl" class="form-control"
+                                   placeholder="https://www.google.com/maps/embed?..." />
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <!-- Pricing & Capacity -->
+                        <h5 class="fw-bold mb-3 text-primary">
+                            <i class="bi bi-currency-dollar me-2"></i>Pricing & Capacity
+                        </h5>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label asp-for="PricePerNight" class="form-label fw-semibold"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input asp-for="PricePerNight" class="form-control" placeholder="0.00" />
+                                </div>
+                                <span asp-validation-for="PricePerNight" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Bedrooms" class="form-label fw-semibold"></label>
+                                <input asp-for="Bedrooms" type="number" class="form-control" min="1" max="20" />
+                                <span asp-validation-for="Bedrooms" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Bathrooms" class="form-label fw-semibold"></label>
+                                <input asp-for="Bathrooms" type="number" class="form-control" min="1" max="20" />
+                                <span asp-validation-for="Bathrooms" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="MaxGuests" class="form-label fw-semibold"></label>
+                            <input asp-for="MaxGuests" type="number" class="form-control" min="1" max="50" style="max-width:200px;" />
+                            <span asp-validation-for="MaxGuests" class="text-danger small"></span>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <!-- Media -->
+                        <h5 class="fw-bold mb-3 text-primary">
+                            <i class="bi bi-images me-2"></i>Media
+                        </h5>
+
+                        <div class="mb-3">
+                            <label asp-for="ImageUrl" class="form-label fw-semibold">
+                                Main Image URL
+                                <small class="text-muted fw-normal">(optional)</small>
+                            </label>
+                            <input asp-for="ImageUrl" class="form-control"
+                                   placeholder="https://example.com/image.jpg" />
+                            <span asp-validation-for="ImageUrl" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="GalleryImages" class="form-label fw-semibold">
+                                Gallery Images
+                                <small class="text-muted fw-normal">(comma-separated URLs, optional)</small>
+                            </label>
+                            <textarea asp-for="GalleryImages" class="form-control" rows="2"
+                                      placeholder="https://example.com/img1.jpg, https://example.com/img2.jpg"></textarea>
+                        </div>
+
+                        <div class="d-flex gap-3 pt-2">
+                            <button type="submit" class="btn btn-primary px-5 rounded-pill">
+                                <i class="bi bi-check-lg me-1"></i> Create Property
+                            </button>
+                            <a asp-action="MyProperties" class="btn btn-outline-secondary rounded-pill px-4">
+                                Cancel
+                            </a>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,201 @@
+@model Online_Booking_System.ViewModels.OwnerDashboardViewModel
+
+@{
+    ViewData["Title"] = "Owner Dashboard";
+}
+
+<div class="container py-5">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">
+                <i class="bi bi-speedometer2 text-primary me-2"></i>Owner Dashboard
+            </h2>
+            <p class="text-muted mb-0">Manage your properties and bookings</p>
+        </div>
+        <a asp-action="CreateProperty" class="btn btn-primary rounded-pill px-4">
+            <i class="bi bi-plus-lg me-1"></i> Add Property
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-5">
+
+        <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <span class="text-muted fw-semibold">Properties</span>
+                        <div class="bg-primary bg-opacity-10 rounded-3 p-2">
+                            <i class="bi bi-house-door-fill text-primary fs-4"></i>
+                        </div>
+                    </div>
+                    <h2 class="fw-bold mb-0">@Model.TotalProperties</h2>
+                    <small class="text-muted">Total listed</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <span class="text-muted fw-semibold">Bookings</span>
+                        <div class="bg-info bg-opacity-10 rounded-3 p-2">
+                            <i class="bi bi-calendar-check-fill text-info fs-4"></i>
+                        </div>
+                    </div>
+                    <h2 class="fw-bold mb-0">@Model.TotalBookings</h2>
+                    <small class="text-muted">
+                        <span class="text-warning fw-semibold">@Model.PendingBookings pending</span>
+                        &nbsp;·&nbsp;
+                        <span class="text-success fw-semibold">@Model.ConfirmedBookings confirmed</span>
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <span class="text-muted fw-semibold">Revenue</span>
+                        <div class="bg-success bg-opacity-10 rounded-3 p-2">
+                            <i class="bi bi-cash-stack text-success fs-4"></i>
+                        </div>
+                    </div>
+                    <h2 class="fw-bold mb-0">$@Model.TotalRevenue.ToString("N0")</h2>
+                    <small class="text-muted">From confirmed bookings</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <span class="text-muted fw-semibold">Cancelled</span>
+                        <div class="bg-danger bg-opacity-10 rounded-3 p-2">
+                            <i class="bi bi-x-circle-fill text-danger fs-4"></i>
+                        </div>
+                    </div>
+                    <h2 class="fw-bold mb-0">@Model.CancelledBookings</h2>
+                    <small class="text-muted">Cancelled bookings</small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Recent Properties -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-header bg-white border-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">Recent Properties</h5>
+                    <a asp-action="MyProperties" class="btn btn-sm btn-outline-primary rounded-pill">View All</a>
+                </div>
+                <div class="card-body p-4">
+                    @if (!Model.RecentProperties.Any())
+                    {
+                        <div class="text-center py-4 text-muted">
+                            <i class="bi bi-house-x fs-1 d-block mb-2"></i>
+                            No properties yet.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var p in Model.RecentProperties)
+                            {
+                                <div class="list-group-item px-0 py-3 border-0 border-bottom">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img src="@(string.IsNullOrEmpty(p.ImageUrl) ? "https://placehold.co/60x60" : p.ImageUrl)"
+                                             class="rounded-3 object-fit-cover"
+                                             style="width:60px;height:60px;" />
+                                        <div class="flex-grow-1 min-w-0">
+                                            <div class="fw-semibold text-truncate">@p.Title</div>
+                                            <small class="text-muted">@p.City, @p.Country</small>
+                                        </div>
+                                        <div class="text-end">
+                                            <div class="fw-bold text-primary">$@p.PricePerNight<small class="text-muted fw-normal">/night</small></div>
+                                            <small class="text-muted">@p.TotalBookings bookings</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Bookings -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+                    <h5 class="fw-bold mb-0">Recent Bookings</h5>
+                </div>
+                <div class="card-body p-4">
+                    @if (!Model.RecentBookings.Any())
+                    {
+                        <div class="text-center py-4 text-muted">
+                            <i class="bi bi-calendar-x fs-1 d-block mb-2"></i>
+                            No bookings yet.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var b in Model.RecentBookings)
+                            {
+                                string badgeClass = b.Status switch
+                                {
+                                    "Pending" => "bg-warning text-dark",
+                                    "Confirmed" => "bg-success",
+                                    "Cancelled" => "bg-danger",
+                                    _ => "bg-secondary"
+                                };
+
+                                <div class="list-group-item px-0 py-3 border-0 border-bottom">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <div class="fw-semibold">@b.GuestName</div>
+                                            <small class="text-muted">@b.PropertyTitle</small>
+                                            <div class="small text-muted mt-1">
+                                                @b.CheckIn.ToString("MMM dd") – @b.CheckOut.ToString("MMM dd, yyyy")
+                                            </div>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="badge @badgeClass rounded-pill mb-1">@b.Status</span>
+                                            <div class="fw-bold text-primary small">$@b.TotalPrice</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

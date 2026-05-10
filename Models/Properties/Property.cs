@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Online_Booking_System.Models.Properties
 {
@@ -50,5 +51,11 @@ namespace Online_Booking_System.Models.Properties
         public int MaxGuests { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        // Owner relationship
+        public string? OwnerId { get; set; }
+
+        [ForeignKey(nameof(OwnerId))]
+        public ApplicationUser? Owner { get; set; }
     }
 }
