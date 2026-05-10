@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Online_Booking_System.Contracts;
+using Online_Booking_System.Contracts.Payment;
 using Online_Booking_System.Data;
 using Online_Booking_System.Models;
 using Online_Booking_System.Services;
+using Online_Booking_System.Services.Payment;
 using Online_Booking_System.Settings;
 
 namespace Online_Booking_System
@@ -51,6 +53,24 @@ namespace Online_Booking_System
       builder.Services.AddScoped<IPropertyService, PropertyService>();
             builder.Services.AddScoped<IBookingService, BookingService>();
             builder.Services.AddScoped<IOwnerService, OwnerService>();
+
+            // ── Payment ──────────────────────────────────────────────────────────
+            builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+            builder.Services.Configure<PayMobSettings>(builder.Configuration.GetSection("PayMob"));
+            builder.Services.Configure<PayPalSettings>(builder.Configuration.GetSection("PayPal"));
+
+            // Register each provider — IEnumerable<IPaymentProvider> is injected into PaymentService
+            builder.Services.AddScoped<IPaymentProvider, StripePaymentProvider>();
+            builder.Services.AddScoped<IPaymentProvider, PayMobPaymentProvider>();
+            builder.Services.AddScoped<IPaymentProvider, PayPalPaymentProvider>();
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
+
+            // HttpClient factories used by PayMob and PayPal providers
+            builder.Services.AddHttpClient("PayMob");
+            builder.Services.AddHttpClient("PayPal");
+
+            // Required for PaymentService to build absolute callback URLs
+            builder.Services.AddHttpContextAccessor();
 
             builder.Services.AddControllersWithViews();
 

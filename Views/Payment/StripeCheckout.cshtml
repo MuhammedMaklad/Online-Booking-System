@@ -1,0 +1,122 @@
+@model Online_Booking_System.ViewModels.Payment.PaymentCheckoutViewModel
+
+@{
+    ViewData["Title"] = "Complete Payment";
+}
+
+<div class="container py-5 mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-primary text-white p-4 border-0">
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="bi bi-credit-card-2-front-fill fs-3"></i>
+                        <div>
+                            <h5 class="mb-0 fw-bold">Secure Payment</h5>
+                            <small class="opacity-75">Powered by Stripe</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-4">
+                    <!-- Order summary -->
+                    <div class="bg-light rounded-3 p-3 mb-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="text-muted small">Booking for</div>
+                                <div class="fw-semibold">@Model.PropertyTitle</div>
+                            </div>
+                            <div class="text-end">
+                                <div class="text-muted small">Total</div>
+                                <div class="fw-bold text-primary fs-5">@Model.Amount.ToString("C") @Model.Currency</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stripe Elements mount point -->
+                    <div id="payment-element" class="mb-3"></div>
+                    <div id="payment-message" class="text-danger small mb-3 d-none"></div>
+
+                    <form id="stripe-form">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" id="transactionId" value="@Model.TransactionId" />
+                        <button id="submit-btn" type="submit" class="btn btn-primary w-100 py-3 rounded-3 fw-semibold">
+                            <span id="btn-text"><i class="bi bi-lock-fill me-2"></i>Pay @Model.Amount.ToString("C") @Model.Currency</span>
+                            <span id="btn-spinner" class="d-none">
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Processing…
+                            </span>
+                        </button>
+                    </form>
+
+                    <p class="text-center text-muted small mt-3 mb-0">
+                        <i class="bi bi-shield-lock-fill me-1 text-success"></i>
+                        256-bit SSL encryption. We never store your card details.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    const stripe = Stripe('@Model.PublishableKey');
+    const clientSecret = '@Model.ClientSecret';
+    const transactionId = document.getElementById('transactionId').value;
+
+    const elements = stripe.elements({ clientSecret });
+    const paymentElement = elements.create('payment');
+    paymentElement.mount('#payment-element');
+
+    const form = document.getElementById('stripe-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const btnText = document.getElementById('btn-text');
+    const btnSpinner = document.getElementById('btn-spinner');
+    const messageDiv = document.getElementById('payment-message');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        submitBtn.disabled = true;
+        btnText.classList.add('d-none');
+        btnSpinner.classList.remove('d-none');
+        messageDiv.classList.add('d-none');
+
+        const { error, paymentIntent } = await stripe.confirmPayment({
+            elements,
+            redirect: 'if_required'
+        });
+
+        if (error) {
+            messageDiv.textContent = error.message;
+            messageDiv.classList.remove('d-none');
+            submitBtn.disabled = false;
+            btnText.classList.remove('d-none');
+            btnSpinner.classList.add('d-none');
+            return;
+        }
+
+        if (paymentIntent && paymentIntent.status === 'succeeded') {
+            // Post to server to verify and confirm booking
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+            const resp = await fetch('/Payment/StripeConfirm', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'RequestVerificationToken': token
+                },
+                body: `transactionId=${transactionId}&paymentIntentId=${paymentIntent.id}&__RequestVerificationToken=${encodeURIComponent(token)}`
+            });
+
+            if (resp.redirected) {
+                window.location.href = resp.url;
+            } else {
+                window.location.href = '/Booking/MyBookings';
+            }
+        }
+    });
+</script>
+}

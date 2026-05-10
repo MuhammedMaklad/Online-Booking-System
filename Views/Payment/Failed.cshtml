@@ -1,0 +1,56 @@
+@model Online_Booking_System.ViewModels.Payment.PaymentTransactionViewModel?
+
+@{
+    ViewData["Title"] = "Payment Failed";
+}
+
+<div class="container py-5 mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7 text-center">
+
+            <div class="bg-danger bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width:88px;height:88px;">
+                <i class="bi bi-x-circle-fill text-danger" style="font-size:2.5rem;"></i>
+            </div>
+
+            <h2 class="fw-bold mb-2">Payment Failed</h2>
+            <p class="text-muted mb-4">
+                @if (Model?.FailureReason is not null)
+                {
+                    @Model.FailureReason
+                }
+                else
+                {
+                    <span>Something went wrong while processing your payment. No charge was made.</span>
+                }
+            </p>
+
+            @if (Model is not null)
+            {
+                <div class="card border-0 bg-light rounded-4 p-4 mb-4 text-start">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Property</span>
+                        <span class="fw-semibold small">@Model.PropertyTitle</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Amount</span>
+                        <span class="fw-semibold small">@Model.Amount.ToString("C") @Model.Currency</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted small">Method</span>
+                        <span class="fw-semibold small">@Model.Method</span>
+                    </div>
+                </div>
+
+                <a asp-controller="Payment" asp-action="Choose" asp-route-bookingId="@Model.BookingId"
+                   class="btn btn-primary rounded-3 px-4 py-2 me-2">
+                    <i class="bi bi-arrow-repeat me-2"></i>Try Again
+                </a>
+            }
+
+            <a asp-controller="Booking" asp-action="MyBookings" class="btn btn-outline-secondary rounded-3 px-4 py-2">
+                <i class="bi bi-journal-bookmark me-2"></i>My Bookings
+            </a>
+
+        </div>
+    </div>
+</div>
