@@ -1,4 +1,6 @@
-﻿@{
+﻿@model IEnumerable<Online_Booking_System.Models.Advertisements.Advertisement>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -16,7 +18,7 @@
         <div class="card h-100 p-4 border-0 shadow-sm">
             <div class="mb-3 text-primary">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-lightning-charge" viewBox="0 0 16 16">
-                    <path d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09z"/>
+                    <path d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09z" />
                 </svg>
             </div>
             <h4>Fast Booking</h4>
@@ -27,7 +29,7 @@
         <div class="card h-100 p-4 border-0 shadow-sm">
             <div class="mb-3 text-primary">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-shield-check" viewBox="0 0 16 16">
-                    <path d="M8 0c-.69 0-1.843.265-2.928.56-1.11.3-2.229.655-2.887.87a1.54 1.54 0 0 0-1.044 1.262c-.596 4.477.787 7.795 2.465 9.99a11.775 11.775 0 0 0 2.517 2.453c.386.273.744.482 1.048.625.28.132.581.24.829.24s.548-.108.829-.24a7.158 7.158 0 0 0 1.048-.625 11.777 11.777 0 0 0 2.517-2.453c1.678-2.195 3.061-5.513 2.465-9.99a1.541 1.541 0 0 0-1.044-1.263 62.467 62.467 0 0 0-2.887-.87C9.843.266 8.69 0 8 0zm0 5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z"/>
+                    <path d="M8 0c-.69 0-1.843.265-2.928.56-1.11.3-2.229.655-2.887.87a1.54 1.54 0 0 0-1.044 1.262c-.596 4.477.787 7.795 2.465 9.99a11.775 11.775 0 0 0 2.517 2.453c.386.273.744.482 1.048.625.28.132.581.24.829.24s.548-.108.829-.24a7.158 7.158 0 0 0 1.048-.625 11.777 11.777 0 0 0 2.517-2.453c1.678-2.195 3.061-5.513 2.465-9.99a1.541 1.541 0 0 0-1.044-1.263 62.467 62.467 0 0 0-2.887-.87C9.843.266 8.69 0 8 0zm0 5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z" />
                 </svg>
             </div>
             <h4>Secure Payments</h4>
@@ -38,7 +40,7 @@
         <div class="card h-100 p-4 border-0 shadow-sm">
             <div class="mb-3 text-primary">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-clock-history" viewBox="0 0 16 16">
-                    <path d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022l-.074 1.017zm2.009.45a7 7 0 0 0-.738-.291l.269-.962c.284.08.56.175.828.287l-.359.666zM11.5 2a7.05 7.05 0 0 0-.683-.343l.427-.905c.269.127.528.27.777.427l-.521.821zm1.516 1.484a7.05 7.05 0 0 0-.521-.427l.521-.821c.269.127.528.27.777.427l-.521.821zm1.484 1.516a7.05 7.05 0 0 0-.427-.521l.821-.521c.157.249.3.508.427.777l-.905.427zm.45 2.009a7 7 0 0 0-.291-.738l.962.269c.112.268.207.544.287.828l-.958.359zM15 8a7 7 0 0 0-.019-.515l1.017-.074A8 8 0 0 1 16 8h-1zM8 15a7 7 0 1 0 0-14v1a6 6 0 1 1 0 12v1z"/>
+                    <path d="M8.515 1.019A7 7 0 0 0 8 1V0a8 8 0 0 1 .589.022l-.074 1.017zm2.009.45a7 7 0 0 0-.738-.291l.269-.962c.284.08.56.175.828.287l-.359.666zM11.5 2a7.05 7.05 0 0 0-.683-.343l.427-.905c.269.127.528.27.777.427l-.521.821zm1.516 1.484a7.05 7.05 0 0 0-.521-.427l.521-.821c.269.127.528.27.777.427l-.521.821zm1.484 1.516a7.05 7.05 0 0 0-.427-.521l.821-.521c.157.249.3.508.427.777l-.905.427zm.45 2.009a7 7 0 0 0-.291-.738l.962.269c.112.268.207.544.287.828l-.958.359zM15 8a7 7 0 0 0-.019-.515l1.017-.074A8 8 0 0 1 16 8h-1zM8 15a7 7 0 1 0 0-14v1a6 6 0 1 1 0 12v1z" />
                 </svg>
             </div>
             <h4>24/7 Support</h4>
@@ -46,3 +48,66 @@
         </div>
     </div>
 </div>
+
+@* ── Approved Advertisements Section ── *@
+@if (Model != null && Model.Any())
+{
+    <div class="mt-5 mb-4">
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <div class="bg-primary bg-opacity-10 rounded-3 p-2">
+                <i class="bi bi-megaphone-fill text-primary fs-4"></i>
+            </div>
+            <div>
+                <h3 class="fw-bold mb-0">Special Offers</h3>
+                <p class="text-muted mb-0 small">Exclusive deals from our property hosts</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            @foreach (var ad in Model)
+            {
+                <div class="col-md-6 col-xl-4">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+
+                        @if (!string.IsNullOrEmpty(ad.ImageUrl))
+                        {
+                            <img src="@ad.ImageUrl"
+                                 class="card-img-top"
+                                 style="height: 200px; object-fit: cover;"
+                                 alt="@ad.Title" />
+                        }
+                        else
+                        {
+                            <div class="d-flex align-items-center justify-content-center bg-primary bg-opacity-10"
+                                 style="height: 100px;">
+                                <i class="bi bi-megaphone-fill text-primary" style="font-size: 2.5rem;"></i>
+                            </div>
+                        }
+
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-start gap-2 mb-2">
+                                <span class="badge bg-success rounded-pill px-3 py-2 flex-shrink-0">
+                                    <i class="bi bi-patch-check-fill me-1"></i>Featured
+                                </span>
+                            </div>
+                            <h5 class="fw-bold mb-2">@ad.Title</h5>
+                            <p class="text-muted mb-0" style="font-size: 14px; line-height: 1.65;">
+                                @(ad.Description.Length > 120
+                                    ? ad.Description[..120] + "..."
+                                    : ad.Description)
+                            </p>
+                        </div>
+
+                        <div class="card-footer bg-white border-0 px-4 pb-4 pt-0">
+                            <a asp-controller="Property" asp-action="Index"
+                                   class="btn btn-outline-primary w-100 rounded-3">
+                                <i class="bi bi-search me-1"></i> Browse Properties
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}

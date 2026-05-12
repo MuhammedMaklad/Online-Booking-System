@@ -89,43 +89,49 @@ namespace Online_Booking_System.Services
       return token;
     }
 
-    public async Task<LoginViewModel> LoginAsync(LoginViewModel model)
-    {
-      var user = await _userManager.FindByEmailAsync(model.Email);
-      if (user == null)
-      {
-        model.Password = "ERROR";
-        return model;
-      }
+        public async Task<LoginViewModel> LoginAsync(LoginViewModel model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                model.Password = "ERROR";
+                return model;
+            }
 
-      if (!user.IsActive)
-      {
-        model.Password = "ERROR";
-        return model;
-      }
+            if (!user.IsActive)
+            {
+                model.Password = "ERROR";
+                return model;
+            }
 
-      var result = await _signInManager.PasswordSignInAsync(
-        user,
-        model.Password,
-        isPersistent: false,
-        lockoutOnFailure: true);
+            if (!user.EmailConfirmed)
+            {
+                model.Error = "Please confirm your email before logging in.";
+                model.Password = "ERROR";
+                return model;
+            }
 
-      if (!result.Succeeded)
-      {
-        model.Password = "ERROR";
-        return model;
-      }
+            var result = await _signInManager.PasswordSignInAsync(
+                user,
+                model.Password,
+                isPersistent: false,
+                lockoutOnFailure: true);
 
-      user.LastLoginAt = DateTime.UtcNow;
-      await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                model.Password = "ERROR";
+                return model;
+            }
 
-      model.UserId = user.Id;
+            user.LastLoginAt = DateTime.UtcNow;
+            await _userManager.UpdateAsync(user);
 
-      model.IsSuccess = true;
-      return model;
-    }
+            model.UserId = user.Id;
+            model.IsSuccess = true;
+            return model;
+        }
 
-    public async Task LogoutAsync()
+        public async Task LogoutAsync()
     {
       await _signInManager.SignOutAsync();
     }

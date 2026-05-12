@@ -1,0 +1,126 @@
+﻿@model Online_Booking_System.ViewModels.AdminAdvertisementFilterViewModel
+@{
+    ViewData["Title"] = "Advertisement Moderation";
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">
+                <i class="bi bi-megaphone-fill text-info me-2"></i>Advertisement Moderation
+            </h2>
+            <small class="text-muted">@Model.TotalCount ads found</small>
+        </div>
+        <a asp-action="Dashboard" class="btn btn-outline-secondary rounded-pill px-4">
+            <i class="bi bi-arrow-left me-1"></i> Dashboard
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"] <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"] <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card border-0 shadow-sm p-3 mb-4">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <select name="Status" class="form-select" onchange="this.form.submit()">
+                    <option value="">All Statuses</option>
+                    <option value="Pending" selected="@(Model.Status == "Pending")">Pending</option>
+                    <option value="Approved" selected="@(Model.Status == "Approved")">Approved</option>
+                    <option value="Rejected" selected="@(Model.Status == "Rejected")">Rejected</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <a asp-action="Advertisements" class="btn btn-outline-secondary w-100">Clear</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="row g-4">
+        @foreach (var ad in Model.Advertisements)
+        {
+            string bc = ad.Status switch
+            {
+                "Approved" => "bg-success",
+                "Rejected" => "bg-danger",
+                _ => "bg-warning text-dark"
+            };
+            <div class="col-md-6 col-xl-4">
+                <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+                    @if (!string.IsNullOrEmpty(ad.ImageUrl))
+                    {
+                        <img src="@ad.ImageUrl" class="card-img-top" style="height:180px;object-fit:cover;" />
+                    }
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="fw-bold mb-0">@ad.Title</h5>
+                            <span class="badge @bc rounded-pill">@ad.Status</span>
+                        </div>
+                        <p class="text-muted small mb-3">
+                            @(ad.Description.Length > 100 ? ad.Description[..100] + "..." : ad.Description)
+                        </p>
+                        <div class="text-muted small mb-2">
+                            <i class="bi bi-person-fill me-1"></i> @ad.OwnerName · @ad.OwnerEmail
+                        </div>
+                        @if (!string.IsNullOrEmpty(ad.AdminNotes))
+                        {
+                            <div class="alert alert-light border small p-2 mb-0">
+                                <i class="bi bi-chat-text me-1"></i> @ad.AdminNotes
+                            </div>
+                        }
+                    </div>
+                    <div class="card-footer bg-white border-0 p-3 pt-0">
+                        <div class="d-flex gap-2">
+                            @if (ad.Status == "Pending" || ad.Status == "Rejected")
+                            {
+                                <form asp-action="ReviewAdvertisement" method="post" class="flex-fill">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="AdvertisementId" value="@ad.Id" />
+                                    <input type="hidden" name="Action" value="Approve" />
+                                    <button type="submit" class="btn btn-success btn-sm w-100 rounded-3">
+                                        <i class="bi bi-check-lg me-1"></i>Approve
+                                    </button>
+                                </form>
+                            }
+                            @if (ad.Status == "Pending" || ad.Status == "Approved")
+                            {
+                                <form asp-action="ReviewAdvertisement" method="post" class="flex-fill">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="AdvertisementId" value="@ad.Id" />
+                                    <input type="hidden" name="Action" value="Reject" />
+                                    <button type="submit" class="btn btn-outline-danger btn-sm w-100 rounded-3">
+                                        <i class="bi bi-x-lg me-1"></i>Reject
+                                    </button>
+                                </form>
+                            }
+                            <form asp-action="DeleteAdvertisement" method="post"
+                                  onsubmit="return confirm('Delete this advertisement?')">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@ad.Id" />
+                                <button type="submit" class="btn btn-outline-secondary btn-sm rounded-3">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!Model.Advertisements.Any())
+        {
+            <div class="col-12 text-center py-5 text-muted">
+                <i class="bi bi-megaphone" style="font-size:3rem;"></i>
+                <p class="mt-3">No advertisements found.</p>
+            </div>
+        }
+    </div>
+</div>

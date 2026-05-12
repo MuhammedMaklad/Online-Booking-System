@@ -1,0 +1,141 @@
+﻿@model IEnumerable<Online_Booking_System.ViewModels.AdminAdvertisementListViewModel>
+
+@{
+    ViewData["Title"] = "My Advertisements";
+}
+
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">
+                <i class="bi bi-megaphone-fill text-primary me-2"></i>My Advertisements
+            </h2>
+            <small class="text-muted">@Model.Count() advertisements submitted</small>
+        </div>
+        <a asp-action="Create" class="btn btn-primary rounded-pill px-4">
+            <i class="bi bi-plus-lg me-1"></i> New Advertisement
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-megaphone text-muted" style="font-size: 4rem;"></i>
+            <h4 class="mt-3 fw-bold">No advertisements yet</h4>
+            <p class="text-muted">Submit your first advertisement to promote your property.</p>
+            <a asp-action="Create" class="btn btn-primary mt-2 rounded-pill px-4">
+                <i class="bi bi-plus-lg me-1"></i> Create Advertisement
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var ad in Model)
+            {
+                string badgeClass = ad.Status switch
+                {
+                    "Approved" => "bg-success",
+                    "Rejected" => "bg-danger",
+                    _ => "bg-warning text-dark"
+                };
+
+                string statusIcon = ad.Status switch
+                {
+                    "Approved" => "bi-check-circle-fill",
+                    "Rejected" => "bi-x-circle-fill",
+                    _ => "bi-hourglass-split"
+                };
+
+                <div class="col-md-6 col-xl-4">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+
+                        @if (!string.IsNullOrEmpty(ad.ImageUrl))
+                        {
+                            <img src="@ad.ImageUrl" class="card-img-top"
+                                 style="height:180px; object-fit:cover;" alt="@ad.Title" />
+                        }
+                        else
+                        {
+                            <div class="bg-light d-flex align-items-center justify-content-center"
+                                 style="height:100px;">
+                                <i class="bi bi-image text-muted" style="font-size:2.5rem;"></i>
+                            </div>
+                        }
+
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="fw-bold mb-0 text-truncate me-2">@ad.Title</h5>
+                                <span class="badge @badgeClass rounded-pill px-3 flex-shrink-0">
+                                    <i class="bi @statusIcon me-1"></i>@ad.Status
+                                </span>
+                            </div>
+
+                            <p class="text-muted small mb-3">
+                                @(ad.Description.Length > 100
+                                    ? ad.Description[..100] + "..."
+                                    : ad.Description)
+                            </p>
+
+                            <div class="d-flex align-items-center gap-2 small text-muted mb-3">
+                                <i class="bi bi-calendar3"></i>
+                                Submitted @ad.CreatedAt.ToString("MMM dd, yyyy")
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(ad.AdminNotes))
+                            {
+                                <div class="alert alert-light border small p-2 mb-0">
+                                    <i class="bi bi-chat-text me-1 text-primary"></i>
+                                    <strong>Admin notes:</strong> @ad.AdminNotes
+                                </div>
+                            }
+
+                            @if (ad.Status == "Approved")
+                            {
+                                <div class="alert alert-success border-0 small p-2 mb-0 mt-2">
+                                    <i class="bi bi-check-circle-fill me-1"></i>
+                                    Your ad is live and visible to all visitors on the home page.
+                                </div>
+                            }
+                        </div>
+
+                        <div class="card-footer bg-white border-0 p-3 pt-0">
+                            <div class="d-flex gap-2">
+                                <a asp-action="Details" asp-route-id="@ad.Id"
+                                       class="btn btn-outline-secondary btn-sm flex-fill rounded-3">
+                                    <i class="bi bi-eye me-1"></i>View
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@ad.Id"
+                                       class="btn btn-outline-primary btn-sm flex-fill rounded-3">
+                                    <i class="bi bi-pencil me-1"></i>Edit
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@ad.Id"
+                                       class="btn btn-outline-danger btn-sm rounded-3">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+</div>

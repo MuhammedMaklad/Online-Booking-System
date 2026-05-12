@@ -1,0 +1,122 @@
+﻿@using Online_Booking_System.Models.Advertisements;
+@{
+    ViewData["Title"] = "Advertisement Details";
+    var ad = ViewBag.Ad as Advertisement;
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+
+            <div class="d-flex align-items-center gap-3 mb-4">
+                <a asp-action="MyAdvertisements"
+                       class="btn btn-outline-secondary rounded-circle p-2 lh-1">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+                <div>
+                    <h2 class="fw-bold mb-0">Advertisement Details</h2>
+                    <p class="text-muted mb-0">View your submitted advertisement</p>
+                </div>
+            </div>
+
+            @if (ad != null)
+            {
+                string badgeClass = ad.Status.ToString() switch
+                {
+                    "Approved" => "bg-success",
+                    "Rejected" => "bg-danger",
+                    _ => "bg-warning text-dark"
+                };
+
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+
+                    @if (!string.IsNullOrEmpty(ad.ImageUrl))
+                    {
+                        <img src="@ad.ImageUrl" class="card-img-top"
+                             style="height:280px; object-fit:cover;" alt="@ad.Title" />
+                    }
+
+                    <div class="card-body p-4">
+
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h3 class="fw-bold mb-0">@ad.Title</h3>
+                            <span class="badge @badgeClass rounded-pill px-3 py-2 ms-2 flex-shrink-0">
+                                @ad.Status
+                            </span>
+                        </div>
+
+                        <p class="text-muted mb-4" style="line-height:1.75;">
+                            @ad.Description
+                        </p>
+
+                        <hr class="opacity-25" />
+
+                        <div class="row g-3 mt-1">
+                            <div class="col-sm-6">
+                                <div class="text-muted small">Submitted</div>
+                                <div class="fw-semibold">
+                                    @ad.CreatedAt.ToString("MMM dd, yyyy · HH:mm")
+                                </div>
+                            </div>
+                            @if (ad.ReviewedAt != null)
+                            {
+                                <div class="col-sm-6">
+                                    <div class="text-muted small">Reviewed</div>
+                                    <div class="fw-semibold">
+                                        @ad.ReviewedAt.Value.ToString("MMM dd, yyyy · HH:mm")
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(ad.AdminNotes))
+                        {
+                            <div class="alert alert-info mt-4 mb-0">
+                                <div class="fw-semibold mb-1">
+                                    <i class="bi bi-chat-quote-fill me-2"></i>Admin Notes
+                                </div>
+                                <div class="small">@ad.AdminNotes</div>
+                            </div>
+                        }
+
+                        @if (ad.Status == AdvertisementStatus.Approved)
+                        {
+                            <div class="alert alert-success mt-4 mb-0">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                Your advertisement is <strong>live</strong> and visible
+                                to all visitors on the home page.
+                            </div>
+                        }
+
+                        @if (ad.Status == AdvertisementStatus.Rejected)
+                        {
+                            <div class="alert alert-danger mt-4 mb-0">
+                                <i class="bi bi-x-circle-fill me-2"></i>
+                                Your advertisement was rejected. You can
+                                <a asp-action="Edit" asp-route-id="@ad.Id"
+                                   class="alert-link">edit and resubmit</a> it.
+                            </div>
+                        }
+
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3">
+                    <a asp-action="Edit" asp-route-id="@ad.Id"
+                           class="btn btn-primary rounded-pill px-4">
+                        <i class="bi bi-pencil me-1"></i> Edit
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@ad.Id"
+                           class="btn btn-outline-danger rounded-pill px-4">
+                        <i class="bi bi-trash me-1"></i> Delete
+                    </a>
+                    <a asp-action="MyAdvertisements"
+                           class="btn btn-outline-secondary rounded-pill px-4">
+                        Back to List
+                    </a>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>

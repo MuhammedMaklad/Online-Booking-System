@@ -9,11 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Online_Booking_System.styles.css" asp-append-version="true" />
-    
 </head>
 <body>
     <header>
@@ -49,7 +47,18 @@
                                         <li><a class="dropdown-item py-2" asp-controller="Owner" asp-action="Dashboard"><i class="bi bi-speedometer2 me-2 text-primary"></i>Dashboard</a></li>
                                         <li><a class="dropdown-item py-2" asp-controller="Owner" asp-action="MyProperties"><i class="bi bi-house-door me-2 text-primary"></i>My Properties</a></li>
                                         <li><a class="dropdown-item py-2" asp-controller="Owner" asp-action="CreateProperty"><i class="bi bi-plus-circle me-2 text-success"></i>Add Property</a></li>
+                                        <li><a class="dropdown-item py-2" asp-controller="Advertisement" asp-action="MyAdvertisements"><i class="bi bi-megaphone me-2 text-info"></i>My Advertisements</a></li>
                                     </ul>
+                                </li>
+                            }
+
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item ms-lg-1">
+                                    <a class="nav-link text-dark fw-semibold"
+                                           asp-controller="Admin" asp-action="Dashboard">
+                                        <i class="bi bi-shield-fill-check me-1 text-primary"></i>Admin
+                                    </a>
                                 </li>
                             }
 
