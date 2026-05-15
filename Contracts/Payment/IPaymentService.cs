@@ -47,5 +47,8 @@ namespace Online_Booking_System.Contracts.Payment
 
         /// <summary>Returns a single transaction by its internal ID.</summary>
         Task<PaymentTransactionViewModel?> GetTransactionByIdAsync(int transactionId);
+
+        Task<IEnumerable<PaymentTransactionViewModel>> GetAllTransactionsAsync();
+
     }
 }

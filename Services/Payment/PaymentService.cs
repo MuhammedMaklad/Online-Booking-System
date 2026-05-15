@@ -276,6 +276,16 @@ namespace Online_Booking_System.Services.Payment
             };
         }
 
+        public async Task<IEnumerable<PaymentTransactionViewModel>> GetAllTransactionsAsync()
+        {
+            return await _context.PaymentTransactions
+                .Include(t => t.Booking)
+                    .ThenInclude(b => b.Property)
+                .OrderByDescending(t => t.CreatedAt)
+                .Select(t => MapToViewModel(t))
+                .ToListAsync();
+        }
+
         private static PaymentTransactionViewModel MapToViewModel(PaymentTransaction t) =>
             new()
             {
