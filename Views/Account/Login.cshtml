@@ -22,6 +22,18 @@
 
             <form asp-action="Login" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                @if (ViewData.ModelState.ErrorCount > 0 &&
+                         ViewData.ModelState.Values.Any(v =>
+                             v.Errors.Any(e => e.ErrorMessage.Contains("confirm"))))
+                {
+                    <div class="alert alert-warning small">
+                        Didn't receive the email?
+                        <a asp-action="ResendConfirmation" class="alert-link fw-semibold">
+                            Resend confirmation email
+                        </a>
+                    </div>
+                }
                 
                 <div class="form-floating mb-3">
                     <input asp-for="Email" class="form-control" placeholder="name@example.com" />

@@ -17,6 +17,8 @@ namespace Online_Booking_System.Services
         public async Task<IEnumerable<Property>> GetFilteredAsync(PropertyFilterViewModel filter)
         {
             var query = _context.Properties.AsQueryable();
+            query = query.Where(p => p.Status == Models.Properties.PropertyStatus.Approved);
+
 
             if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
             {
@@ -65,7 +67,8 @@ namespace Online_Booking_System.Services
         public async Task<Property?> GetByIdAsync(int id)
         {
             return await _context.Properties
-                .FirstOrDefaultAsync(p => p.Id == id);
+                    .Include(p => p.Owner)
+                    .FirstOrDefaultAsync(p => p.Id == id);
         }
     }
 }

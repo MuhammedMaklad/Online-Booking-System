@@ -33,27 +33,26 @@ namespace Online_Booking_System.Controllers
     }
 
     [HttpPost]
-    public async Task<IActionResult> Register(RegisterViewModel model)
-    {
-      if (!ModelState.IsValid)
-      {
-        return View(model);
-      }
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
 
-      var (userId, token) = await _userService.RegisterAsync(model);
-      if (userId == null)
-      {
-        ModelState.AddModelError("", "Registration failed. Email may already be in use.");
-        return View(model);
-      }
-      return RedirectToAction("Login");
+            var (userId, token) = await _userService.RegisterAsync(model);
+            if (userId == null)
+            {
+                ModelState.AddModelError("", "Registration failed. Email may already be in use.");
+                return View(model);
+            }
 
-      //TempData["ConfirmationToken"] = token;
-      //TempData["UserId"] = userId;
-      //return RedirectToAction(nameof(ConfirmEmail));
-    }
+            TempData["Success"] = "Registration successful! Please check your email to confirm your account.";
+            return RedirectToAction("Login");
+        }
 
-    [HttpGet]
+        [HttpGet]
     public async Task<IActionResult> ConfirmEmail(string? userId = null, string? token = null)
     {
       userId ??= TempData["UserId"]?.ToString();
@@ -102,7 +101,13 @@ namespace Online_Booking_System.Controllers
       return View(model);
     }
 
-    [HttpPost]
+        [HttpGet]
+        public IActionResult ResendConfirmation()
+        {
+            return View(new ResendConfirmationViewModel());
+        }
+
+        [HttpPost]
     public async Task<IActionResult> ResendConfirmation(ResendConfirmationViewModel model)
     {
       if (!ModelState.IsValid)
@@ -128,30 +133,30 @@ namespace Online_Booking_System.Controllers
       return View();
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
-    {
-      if (!ModelState.IsValid)
-      {
-        return View(model);
-      }
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
 
-      var result = await _userService.LoginAsync(model);
-      if (!result.IsSuccess)
-      {
-        ModelState.AddModelError("", "Invalid email or password.");
-        return View(model);
-      }
+            var result = await _userService.LoginAsync(model);
+            if (!result.IsSuccess)
+            {
+                ModelState.AddModelError("", result.Error ?? "Invalid email or password.");
+                return View(model);
+            }
 
-      if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-      {
-        return Redirect(returnUrl);
-      }
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
 
-      return RedirectToAction("Index", "Home");
-    }
+            return RedirectToAction("Index", "Home");
+        }
 
-    [HttpPost]
+        [HttpPost]
     public async Task<IActionResult> Logout()
     {
       await _userService.LogoutAsync();

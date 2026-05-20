@@ -1,26 +1,27 @@
 @model Online_Booking_System.ViewModels.Payment.InitiatePaymentViewModel
 
 @{
-    ViewData["Title"] = "Choose Payment Method";
+    ViewData["Title"] = "Secure Payment";
 }
 
 <div class="container py-5 mt-4">
     <div class="row justify-content-center">
-        <div class="col-lg-6 col-md-8">
+        <div class="col-lg-5 col-md-7">
 
             <div class="text-center mb-5">
-                <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width:72px;height:72px;">
+                <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                     style="width:72px;height:72px;">
                     <i class="bi bi-credit-card-2-front-fill text-primary fs-2"></i>
                 </div>
-                <h2 class="fw-bold">Choose Payment Method</h2>
-                <p class="text-muted">Select how you'd like to pay for your booking</p>
+                <h2 class="fw-bold">Secure Payment</h2>
+                <p class="text-muted">Complete your booking with Stripe</p>
             </div>
 
             @if (TempData["Error"] != null)
             {
                 <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
                     <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             }
 
@@ -28,121 +29,43 @@
                 @Html.AntiForgeryToken()
                 <input type="hidden" asp-for="BookingId" />
                 <input type="hidden" asp-for="Currency" />
-                <input type="hidden" asp-for="Method" id="selectedMethod" />
+                <input type="hidden" name="Method" value="Stripe" />
 
-                <div class="row g-3 mb-4">
-
-                    <!-- Stripe -->
-                    <div class="col-12">
-                        <label class="payment-option-card w-100 border rounded-4 p-4 d-flex align-items-center gap-3 cursor-pointer"
-                               data-method="Stripe" role="button" tabindex="0"
-                               aria-label="Pay with Stripe">
-                            <div class="payment-icon bg-primary bg-opacity-10 rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width:52px;height:52px;">
-                                <i class="bi bi-stripe text-primary fs-4"></i>
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-body p-4 d-flex align-items-center gap-4">
+                        <div class="bg-primary bg-opacity-10 rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                             style="width:64px;height:64px;">
+                            <i class="bi bi-stripe text-primary fs-2"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="fw-bold fs-5 mb-1">Credit / Debit Card</div>
+                            <div class="text-muted small">
+                                Visa, Mastercard, Amex — powered by Stripe
                             </div>
-                            <div class="flex-grow-1">
-                                <div class="fw-semibold fs-6">Stripe</div>
-                                <div class="text-muted small">Credit / Debit card — powered by Stripe</div>
+                            <div class="d-flex gap-2 mt-2">
+                                <span class="badge bg-light text-dark border small">
+                                    <i class="bi bi-shield-fill-check text-success me-1"></i>Secure
+                                </span>
+                                <span class="badge bg-light text-dark border small">
+                                    <i class="bi bi-lightning-fill text-warning me-1"></i>Instant
+                                </span>
                             </div>
-                            <i class="bi bi-check-circle-fill text-primary fs-5 check-icon d-none"></i>
-                        </label>
+                        </div>
+                        <i class="bi bi-check-circle-fill text-primary fs-4"></i>
                     </div>
-
-                    <!-- PayPal -->
-                    <div class="col-12">
-                        <label class="payment-option-card w-100 border rounded-4 p-4 d-flex align-items-center gap-3 cursor-pointer"
-                               data-method="PayPal" role="button" tabindex="0"
-                               aria-label="Pay with PayPal">
-                            <div class="payment-icon bg-warning bg-opacity-10 rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width:52px;height:52px;">
-                                <i class="bi bi-paypal text-warning fs-4"></i>
-                            </div>
-                            <div class="flex-grow-1">
-                                <div class="fw-semibold fs-6">PayPal</div>
-                                <div class="text-muted small">Pay via your PayPal account or card</div>
-                            </div>
-                            <i class="bi bi-check-circle-fill text-warning fs-5 check-icon d-none"></i>
-                        </label>
-                    </div>
-
-                    <!-- PayMob -->
-                    <div class="col-12">
-                        <label class="payment-option-card w-100 border rounded-4 p-4 d-flex align-items-center gap-3 cursor-pointer"
-                               data-method="PayMob" role="button" tabindex="0"
-                               aria-label="Pay with PayMob">
-                            <div class="payment-icon bg-success bg-opacity-10 rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width:52px;height:52px;">
-                                <i class="bi bi-wallet2 text-success fs-4"></i>
-                            </div>
-                            <div class="flex-grow-1">
-                                <div class="fw-semibold fs-6">PayMob</div>
-                                <div class="text-muted small">Local card &amp; mobile wallet (Egypt)</div>
-                            </div>
-                            <i class="bi bi-check-circle-fill text-success fs-5 check-icon d-none"></i>
-                        </label>
-                    </div>
-
                 </div>
 
-                <div id="methodError" class="text-danger small mb-3 d-none">
-                    <i class="bi bi-exclamation-circle me-1"></i>Please select a payment method.
-                </div>
-
-                <button type="submit" id="payBtn" class="btn btn-primary w-100 py-3 rounded-3 fw-semibold fs-6">
+                <button type="submit"
+                        class="btn btn-primary w-100 py-3 rounded-3 fw-semibold fs-6">
                     <i class="bi bi-lock-fill me-2"></i>Proceed to Payment
                 </button>
 
                 <p class="text-center text-muted small mt-3">
                     <i class="bi bi-shield-lock-fill me-1 text-success"></i>
-                    Your payment is secured with industry-standard encryption.
+                    256-bit SSL encryption. We never store your card details.
                 </p>
             </form>
 
         </div>
     </div>
 </div>
-
-@section Scripts {
-<style>
-    .payment-option-card {
-        transition: border-color .2s, box-shadow .2s;
-        cursor: pointer;
-        border-color: #dee2e6 !important;
-    }
-    .payment-option-card:hover {
-        border-color: #0d6efd !important;
-        box-shadow: 0 0 0 3px rgba(13,110,253,.1);
-    }
-    .payment-option-card.selected {
-        border-color: #0d6efd !important;
-        box-shadow: 0 0 0 3px rgba(13,110,253,.15);
-        background-color: rgba(13,110,253,.03);
-    }
-</style>
-<script>
-    const cards = document.querySelectorAll('.payment-option-card');
-    const methodInput = document.getElementById('selectedMethod');
-    const methodError = document.getElementById('methodError');
-
-    cards.forEach(card => {
-        const activate = () => {
-            cards.forEach(c => {
-                c.classList.remove('selected');
-                c.querySelector('.check-icon').classList.add('d-none');
-            });
-            card.classList.add('selected');
-            card.querySelector('.check-icon').classList.remove('d-none');
-            methodInput.value = card.dataset.method;
-            methodError.classList.add('d-none');
-        };
-
-        card.addEventListener('click', activate);
-        card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') activate(); });
-    });
-
-    document.querySelector('form').addEventListener('submit', function (e) {
-        if (!methodInput.value) {
-            e.preventDefault();
-            methodError.classList.remove('d-none');
-        }
-    });
-</script>
-}

@@ -1,0 +1,89 @@
+﻿@model Online_Booking_System.Models.Bookings.Booking
+
+@{
+    ViewData["Title"] = "Cancel Booking";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4 p-lg-5 text-center">
+
+                    <div class="bg-danger bg-opacity-10 rounded-circle d-inline-flex p-4 mb-4">
+                        <i class="bi bi-calendar-x-fill text-danger" style="font-size:2.5rem;"></i>
+                    </div>
+
+                    <h3 class="fw-bold mb-2">Cancel Booking?</h3>
+                    <p class="text-muted mb-4">
+                        Are you sure you want to cancel this booking?
+                        This action cannot be undone.
+                    </p>
+
+                    <div class="card border rounded-3 mb-4 text-start overflow-hidden">
+                        @if (!string.IsNullOrEmpty(Model.Property?.ImageUrl))
+                        {
+                            <img src="@Model.Property.ImageUrl"
+                                 style="height:160px; object-fit:cover;"
+                                 class="w-100" alt="@Model.Property.Title" />
+                        }
+                        <div class="p-3">
+                            <div class="fw-bold fs-5 mb-1">@Model.Property?.Title</div>
+                            <div class="text-muted small mb-3">
+                                <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+                                @Model.Property?.City, @Model.Property?.Country
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="text-muted small">Check-in</div>
+                                    <div class="fw-semibold">
+                                        @Model.CheckIn.ToString("MMM dd, yyyy")
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-muted small">Check-out</div>
+                                    <div class="fw-semibold">
+                                        @Model.CheckOut.ToString("MMM dd, yyyy")
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-muted small">Guests</div>
+                                    <div class="fw-semibold">
+                                        <i class="bi bi-person-fill me-1"></i>@Model.GuestsCount
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-muted small">Total Price</div>
+                                    <div class="fw-bold text-primary">$@Model.TotalPrice</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning text-start small">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        If you have already paid for this booking,
+                        please contact support for a refund.
+                    </div>
+
+                    <div class="d-flex gap-3 justify-content-center mt-3">
+                        <form asp-action="Cancel" asp-route-bookingId="@Model.Id"
+                              method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger px-5 rounded-pill">
+                                <i class="bi bi-x-lg me-1"></i> Yes, Cancel Booking
+                            </button>
+                        </form>
+                        <a asp-action="MyBookings"
+                               class="btn btn-outline-secondary rounded-pill px-4">
+                            Keep Booking
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

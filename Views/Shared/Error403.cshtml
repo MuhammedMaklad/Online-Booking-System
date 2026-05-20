@@ -1,0 +1,27 @@
+﻿@{
+    ViewData["Title"] = "Access Denied";
+    Layout = "_Layout";
+}
+
+<div class="container py-5 text-center">
+    <div class="py-5">
+        <div class="display-1 fw-bold text-danger mb-3">403</div>
+        <h2 class="fw-bold mb-3">Access Denied</h2>
+        <p class="text-muted mb-4" style="max-width:420px; margin:0 auto;">
+            You don't have permission to access this page.
+        </p>
+        <div class="d-flex justify-content-center gap-3">
+            <a asp-controller="Home" asp-action="Index"
+                   class="btn btn-primary rounded-pill px-4">
+                <i class="bi bi-house me-1"></i> Go Home
+            </a>
+            @if (User.Identity?.IsAuthenticated == false)
+            {
+                <a asp-controller="Account" asp-action="Login"
+                       class="btn btn-outline-primary rounded-pill px-4">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                </a>
+            }
+        </div>
+    </div>
+</div>

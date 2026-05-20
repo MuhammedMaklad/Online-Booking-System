@@ -1,0 +1,82 @@
+﻿@model Online_Booking_System.ViewModels.CreateAdvertisementViewModel
+
+@{
+    ViewData["Title"] = "Submit Advertisement";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+
+            <div class="d-flex align-items-center gap-3 mb-4">
+                <a asp-action="MyAdvertisements" class="btn btn-outline-secondary rounded-circle p-2 lh-1">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+                <div>
+                    <h2 class="fw-bold mb-0">Submit Advertisement</h2>
+                    <p class="text-muted mb-0">Your ad will be reviewed by an admin before going live</p>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4 p-lg-5">
+
+                    <form asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label fw-semibold"></label>
+                            <input asp-for="Title" class="form-control"
+                                   placeholder="e.g. Summer Special — 20% Off Beach Villa" />
+                            <span asp-validation-for="Title" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-semibold"></label>
+                            <textarea asp-for="Description" class="form-control" rows="5"
+                                      placeholder="Describe your promotion, offer, or announcement..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="ImageUrl" class="form-label fw-semibold">
+                                Image URL
+                                <small class="text-muted fw-normal">(optional)</small>
+                            </label>
+                            <input asp-for="ImageUrl" class="form-control"
+                                   placeholder="https://example.com/banner.jpg" />
+                            <span asp-validation-for="ImageUrl" class="text-danger small"></span>
+                        </div>
+
+                        <div class="alert alert-info d-flex gap-2 align-items-start">
+                            <i class="bi bi-info-circle-fill mt-1 flex-shrink-0"></i>
+                            <div class="small">
+                                After submission your advertisement will be marked as
+                                <strong>Pending</strong> until an admin reviews it.
+                                You'll be able to track its status from My Advertisements.
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3 pt-2">
+                            <button type="submit" class="btn btn-primary px-5 rounded-pill">
+                                <i class="bi bi-send me-1"></i> Submit for Review
+                            </button>
+                            <a asp-action="MyAdvertisements" class="btn btn-outline-secondary rounded-pill px-4">
+                                Cancel
+                            </a>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

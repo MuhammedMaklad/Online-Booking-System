@@ -1,0 +1,53 @@
+﻿@model Online_Booking_System.ViewModels.ResendConfirmationViewModel
+
+@{
+    ViewData["Title"] = "Resend Confirmation Email";
+}
+
+<div class="row justify-content-center fade-in">
+    <div class="col-md-5">
+        <div class="card border-0 shadow-lg p-4">
+            <div class="text-center mb-4">
+                <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                     style="width:80px; height:80px;">
+                    <i class="bi bi-envelope-arrow-up-fill text-primary" style="font-size:2rem;"></i>
+                </div>
+                <h2 class="fw-bold text-primary">Resend Confirmation</h2>
+                <p class="text-muted">Enter your email and we'll resend the confirmation link.</p>
+            </div>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            <form asp-action="ResendConfirmation" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="form-floating mb-4">
+                    <input asp-for="Email" class="form-control" placeholder="name@example.com" />
+                    <label asp-for="Email">Email Address</label>
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-send me-2"></i>Resend Confirmation Email
+                    </button>
+                    <a asp-action="Login" class="btn btn-link text-decoration-none text-muted">
+                        Back to Login
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

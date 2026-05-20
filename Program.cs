@@ -37,39 +37,37 @@ namespace Online_Booking_System
         .AddEntityFrameworkStores<AppDbContext>()
         .AddDefaultTokenProviders();
 
-            builder.Services.AddAuthentication();
-              //.AddGoogle(options =>
-              //{
-              //    options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? "";
-              //    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? "";
-              //    options.CallbackPath = "/signin-google";
-              //});
+            builder.Services.AddAuthentication()
+              .AddGoogle(options =>
+              {
+                  options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? "";
+                  options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? "";
+                  options.CallbackPath = "/signin-google";
+              });
 
             builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("Smtp"));
-      builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
+            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
 
-      builder.Services.AddScoped<IEmailService, EmailService>();
-      builder.Services.AddScoped<IUserService, UserService>();
-      builder.Services.AddScoped<IPropertyService, PropertyService>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IPropertyService, PropertyService>();
             builder.Services.AddScoped<IBookingService, BookingService>();
             builder.Services.AddScoped<IOwnerService, OwnerService>();
+            builder.Services.AddScoped<IAdminService, AdminService>();
 
-            // ── Payment ──────────────────────────────────────────────────────────
+
             builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
             builder.Services.Configure<PayMobSettings>(builder.Configuration.GetSection("PayMob"));
             builder.Services.Configure<PayPalSettings>(builder.Configuration.GetSection("PayPal"));
 
-            // Register each provider — IEnumerable<IPaymentProvider> is injected into PaymentService
             builder.Services.AddScoped<IPaymentProvider, StripePaymentProvider>();
             builder.Services.AddScoped<IPaymentProvider, PayMobPaymentProvider>();
             builder.Services.AddScoped<IPaymentProvider, PayPalPaymentProvider>();
             builder.Services.AddScoped<IPaymentService, PaymentService>();
 
-            // HttpClient factories used by PayMob and PayPal providers
             builder.Services.AddHttpClient("PayMob");
             builder.Services.AddHttpClient("PayPal");
 
-            // Required for PaymentService to build absolute callback URLs
             builder.Services.AddHttpContextAccessor();
 
             builder.Services.AddControllersWithViews();
@@ -78,7 +76,8 @@ namespace Online_Booking_System
 
       if (!app.Environment.IsDevelopment())
       {
-        app.UseExceptionHandler("/Home/Error");
+           app.UseExceptionHandler("/Home/Error");
+           app.UseStatusCodePagesWithReExecute("/Home/ErrorPage/{0}");
       }
 
       app.UseStaticFiles();
@@ -176,7 +175,6 @@ namespace Online_Booking_System
         await userManager.AddToRoleAsync(owner, "Owner");
       }
 
-      // Seed sample properties only if this owner has none yet
       if (dbContext.Properties.Any(p => p.OwnerId == owner.Id))
         return;
 
@@ -199,6 +197,7 @@ namespace Online_Booking_System
           MaxGuests = 8,
           Rating = 4.9,
           ReviewsCount = 124,
+          Status = Online_Booking_System.Models.Properties.PropertyStatus.Approved,
           OwnerId = owner.Id,
           CreatedAt = DateTime.Now.AddDays(-60)
         },
@@ -218,6 +217,7 @@ namespace Online_Booking_System
           MaxGuests = 2,
           Rating = 4.7,
           ReviewsCount = 89,
+          Status = Online_Booking_System.Models.Properties.PropertyStatus.Approved,
           OwnerId = owner.Id,
           CreatedAt = DateTime.Now.AddDays(-45)
         },
@@ -237,6 +237,7 @@ namespace Online_Booking_System
           MaxGuests = 4,
           Rating = 4.8,
           ReviewsCount = 56,
+          Status = Online_Booking_System.Models.Properties.PropertyStatus.Approved,
           OwnerId = owner.Id,
           CreatedAt = DateTime.Now.AddDays(-30)
         }

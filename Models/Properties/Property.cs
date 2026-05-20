@@ -57,5 +57,8 @@ namespace Online_Booking_System.Models.Properties
 
         [ForeignKey(nameof(OwnerId))]
         public ApplicationUser? Owner { get; set; }
+
+        public PropertyStatus Status { get; set; } = PropertyStatus.Pending;
+        public string? AdminNotes { get; set; }
     }
 }

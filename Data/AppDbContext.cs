@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Online_Booking_System.Models;
-using Online_Booking_System.Models.Properties;
 using Online_Booking_System.Models.Bookings;
 using Online_Booking_System.Models.Payments;
+using Online_Booking_System.Models.Properties;
+using Online_Booking_System.Models.Advertisements;
+using System.Reflection.Emit;
 
 namespace Online_Booking_System.Data
 {
@@ -16,6 +18,7 @@ namespace Online_Booking_System.Data
         public DbSet<Property> Properties { get; set; }
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<PaymentTransaction> PaymentTransactions { get; set; }
+        public DbSet<Advertisement> Advertisements { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -32,6 +35,15 @@ namespace Online_Booking_System.Data
                 .HasOne(t => t.User)
                 .WithMany()
                 .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Property>()
+                .Property(p => p.PricePerNight)
+                .HasPrecision(18, 2);
+
+            builder.Entity<Advertisement>()
+                .HasOne(a => a.Owner).WithMany()
+                .HasForeignKey(a => a.OwnerId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

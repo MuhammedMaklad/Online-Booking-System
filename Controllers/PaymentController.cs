@@ -164,7 +164,18 @@ namespace Online_Booking_System.Controllers
         [HttpGet]
         public async Task<IActionResult> History(int bookingId)
         {
-            var transactions = await _paymentService.GetTransactionsByBookingAsync(bookingId);
+            IEnumerable<PaymentTransactionViewModel> transactions;
+
+            // If admin and no bookingId specified, show all transactions
+            if (User.IsInRole("Admin") && bookingId == 0)
+            {
+                transactions = await _paymentService.GetAllTransactionsAsync();
+            }
+            else
+            {
+                transactions = await _paymentService.GetTransactionsByBookingAsync(bookingId);
+            }
+
             ViewBag.BookingId = bookingId;
             return View(transactions);
         }
@@ -214,6 +225,7 @@ namespace Online_Booking_System.Controllers
             else
                 TempData["Error"] = $"Refund failed: {result.ErrorMessage}";
 
+            // Redirect back to history page — admin sees all transactions
             return RedirectToAction(nameof(History), new { bookingId = 0 });
         }
     }
