@@ -225,6 +225,7 @@ namespace Online_Booking_System.Controllers
             else
                 TempData["Error"] = $"Refund failed: {result.ErrorMessage}";
 
+            // Redirect back to history page — admin sees all transactions
             return RedirectToAction(nameof(History), new { bookingId = 0 });
         }
     }

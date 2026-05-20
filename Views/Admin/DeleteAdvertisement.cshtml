@@ -1,0 +1,75 @@
+﻿@model Online_Booking_System.Models.Advertisements.Advertisement
+
+@{
+    ViewData["Title"] = "Delete Advertisement";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4 p-lg-5 text-center">
+
+                    <div class="bg-danger bg-opacity-10 rounded-circle d-inline-flex p-4 mb-4">
+                        <i class="bi bi-megaphone-fill text-danger" style="font-size:2.5rem;"></i>
+                    </div>
+
+                    <h3 class="fw-bold mb-2">Delete Advertisement?</h3>
+                    <p class="text-muted mb-4">
+                        Are you sure you want to permanently delete this advertisement?
+                        This action cannot be undone.
+                    </p>
+
+                    <div class="card border rounded-3 mb-4 text-start overflow-hidden">
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                        {
+                            <img src="@Model.ImageUrl"
+                                 style="height:160px; object-fit:cover;"
+                                 class="w-100" alt="@Model.Title" />
+                        }
+                        <div class="p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="fw-bold fs-5">@Model.Title</div>
+                                @{
+                                    string badgeClass = Model.Status.ToString() switch
+                                    {
+                                        "Approved" => "bg-success",
+                                        "Rejected" => "bg-danger",
+                                        _ => "bg-warning text-dark"
+                                    };
+                                }
+                                <span class="badge @badgeClass rounded-pill px-3">
+                                    @Model.Status
+                                </span>
+                            </div>
+                            <p class="text-muted small mb-2">
+                                @(Model.Description.Length > 100
+                                    ? Model.Description[..100] + "..."
+                                    : Model.Description)
+                            </p>
+                            <div class="text-muted small">
+                                <i class="bi bi-calendar3 me-1"></i>
+                                Submitted @Model.CreatedAt.ToString("MMM dd, yyyy")
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3 justify-content-center">
+                        <form asp-action="DeleteAdvertisement"
+                              asp-route-id="@Model.Id" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger px-5 rounded-pill">
+                                <i class="bi bi-trash me-1"></i> Yes, Delete
+                            </button>
+                        </form>
+                        <a asp-action="Advertisements"
+                               class="btn btn-outline-secondary rounded-pill px-4">
+                            Cancel
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
