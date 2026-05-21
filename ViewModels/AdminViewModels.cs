@@ -107,5 +107,8 @@ namespace Online_Booking_System.ViewModels
 
         [Url]
         public string? ImageUrl { get; set; }
+
+        // File upload for advertisement image
+        public Microsoft.AspNetCore.Http.IFormFile? ImageFile { get; set; }
     }
 }

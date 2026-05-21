@@ -94,3 +94,47 @@ _Chutzpah*
 
 # End of standard Visual Studio ignore
 appsettings.*.json
+
+# Recommended for ASP.NET Core
+bin/
+obj/
+**/bin/
+**/obj/
+
+# Publish output
+**/publish/
+*.Publish.xml
+
+# Logs
+logs/
+*.log
+
+# Secrets
+appsettings.Secret.json
+appsettings.*.Secret.json
+secrets.json
+*.pfx
+
+# EF Core
+# Keep Migrations in repo. If generated snapshots should be ignored, adjust accordingly.
+*.Designer.cs
+
+# Node
+node_modules/
+
+# Test results
+TestResults/
+*.trx
+
+# Coverage
+coverage.opencover.xml
+coverage/
+
+# Temp
+*.tmp
+*.temp
+~$
+
+# Docker
+docker-compose.override.yml
+

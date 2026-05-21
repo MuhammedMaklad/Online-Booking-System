@@ -1,0 +1,121 @@
+﻿@* @model IEnumerable<Online_Booking_System.ViewModels.BookingsViewModel>
+
+@{
+    ViewData["Title"] = "Admin Dashboard - Bookings";
+}
+
+<div class="container py-5">
+    <!-- Header Section (Matches Dashboard Header Setup) -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">
+                <i class="bi bi-calendar2-check-fill text-primary me-2"></i>Bookings Management
+            </h2>
+            <p class="text-muted mb-0">Monitor platform system reservations and statuses</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary rounded-pill px-4 shadow-sm fw-semibold">
+            <i class="bi bi-plus-lg me-1"></i> Create New
+        </a>
+    </div>
+
+    <!-- Alert Banner Template -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-4 mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Modern Data Card Wrapper Table -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-header bg-white border-0 pt-4 px-4 pb-2">
+            <h5 class="fw-bold mb-0 text-dark">All Bookings Logs</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light bg-opacity-50 text-secondary text-uppercase small fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                        <tr>
+                            <th class="ps-4 py-3">@Html.DisplayNameFor(model => model.PropertyImageUrl)</th>
+                            <th class="py-3">@Html.DisplayNameFor(model => model.PropertyTitle)</th>
+                            <th class="py-3">@Html.DisplayNameFor(model => model.PropertyCity)</th>
+                            <th class="py-3">@Html.DisplayNameFor(model => model.UserName)</th>
+                            <th class="py-3">@Html.DisplayNameFor(model => model.CheckIn)</th>
+                            <th class="py-3">@Html.DisplayNameFor(model => model.CheckOut)</th>
+                            <th class="py-3 text-center">@Html.DisplayNameFor(model => model.GuestsCount)</th>
+                            <th class="py-3">@Html.DisplayNameFor(model => model.TotalPrice)</th>
+                            <th class="py-3">@Html.DisplayNameFor(model => model.Status)</th>
+                            <th class="pe-4 py-3 text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="border-top-0">
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <!-- Property Visual Thumb Thumbnail Frame -->
+                                <td class="ps-4">
+                                    <img src="@item.PropertyImageUrl" alt="Property Profile Image" class="rounded-3 shadow-sm" style="width: 48px; height: 48px; object-fit: cover;" onerror="this.src='/images/placeholder.jpg';" />
+                                </td>
+                                <!-- Main Property Field Details -->
+                                <td>
+                                    <span class="fw-bold text-dark">@Html.DisplayFor(modelItem => item.PropertyTitle)</span>
+                                </td>
+                                <!-- City Map Pins -->
+                                <td>
+                                    <span class="text-muted small">
+                                        <i class="bi bi-geo-alt-fill text-danger me-1"></i>@Html.DisplayFor(modelItem => item.PropertyCity)
+                                    </span>
+                                </td>
+                                <!-- Guest Username Link -->
+                                <td>
+                                    <div class="fw-semibold text-secondary">@Html.DisplayFor(modelItem => item.UserName)</div>
+                                </td>
+                                <!-- Dynamic Local Strings Date Tracking -->
+                                <td class="text-muted small">@item.CheckIn.ToString("MMM dd, yyyy")</td>
+                                <td class="text-muted small">@item.CheckOut.ToString("MMM dd, yyyy")</td>
+                                <!-- Guest Unit Metric Counter Pill -->
+                                <td class="text-center">
+                                    <span class="badge bg-light text-dark border rounded-pill px-2.5 py-1">@Html.DisplayFor(modelItem => item.GuestsCount)</span>
+                                </td>
+                                <!-- Calculated Booking Revenue Metric -->
+                                <td>
+                                    <span class="fw-bold text-success">$@item.TotalPrice.ToString("N0")</span>
+                                </td>
+                                <!-- Color-Coded Contextual Badge Switch -->
+                                <td>
+                                    @{
+                                        var statusClass = item.Status?.ToString().ToLower() switch
+                                        {
+                                            "confirmed" or "approved" or "completed" => "bg-success bg-opacity-10 text-success",
+                                            "pending" => "bg-warning bg-opacity-10 text-warning",
+                                            "cancelled" or "rejected" => "bg-danger bg-opacity-10 text-danger",
+                                            _ => "bg-secondary bg-opacity-10 text-secondary"
+                                        };
+                                    }
+                                    <span class="badge rounded-pill px-3 py-2 fw-semibold @statusClass" style="font-size: 0.75rem;">
+                                        @Html.DisplayFor(modelItem => item.Status)
+                                    </span>
+                                </td>
+                                <!-- Action Management Control Row Items -->
+                                <td class="pe-4 text-end">
+                                    <div class="d-inline-flex gap-2">
+                                        <a asp-action="Edit" asp-route-id="@item.BookingId" class="btn btn-sm btn-light border text-primary rounded-3" title="Edit Booking">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@item.BookingId" class="btn btn-sm btn-light border text-info rounded-3" title="View Details">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.BookingId" class="btn btn-sm btn-light border text-danger rounded-3" title="Cancel/Delete Booking">
+                                            <i class="bi bi-trash3-fill"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div> *@

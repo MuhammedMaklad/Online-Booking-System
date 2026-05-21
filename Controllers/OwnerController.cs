@@ -18,8 +18,10 @@ namespace Online_Booking_System.Controllers
 
         // ─── Helper ───────────────────────────────────────────────────────────────
 
-        private string? GetOwnerId() =>
-            User.FindFirstValue(ClaimTypes.NameIdentifier);
+        private string? GetOwnerId()
+        {
+            return User.FindFirstValue(ClaimTypes.NameIdentifier);
+        }
 
         // ─── Dashboard ────────────────────────────────────────────────────────────
 
@@ -27,7 +29,10 @@ namespace Online_Booking_System.Controllers
         public async Task<IActionResult> Dashboard()
         {
             var ownerId = GetOwnerId();
-            if (ownerId == null) return Challenge();
+            if (ownerId == null)
+            {
+                return Challenge();
+            }
 
             var model = await _ownerService.GetDashboardAsync(ownerId);
             return View(model);
@@ -39,7 +44,10 @@ namespace Online_Booking_System.Controllers
         public async Task<IActionResult> MyProperties()
         {
             var ownerId = GetOwnerId();
-            if (ownerId == null) return Challenge();
+            if (ownerId == null)
+            {
+                return Challenge();
+            }
 
             var properties = await _ownerService.GetMyPropertiesAsync(ownerId);
             return View(properties);
@@ -58,10 +66,32 @@ namespace Online_Booking_System.Controllers
         public async Task<IActionResult> CreateProperty(CreatePropertyViewModel model)
         {
             if (!ModelState.IsValid)
+            {
                 return View(model);
+            }
 
             var ownerId = GetOwnerId();
-            if (ownerId == null) return Challenge();
+            if (ownerId == null)
+            {
+                return Challenge();
+            }
+
+            // Handle image file upload if present
+            if (model.ImageFile != null && model.ImageFile.Length > 0)
+            {
+                var uploads = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                if (!Directory.Exists(uploads))
+                {
+                    Directory.CreateDirectory(uploads);
+                }
+                var fileName = $"property_{Guid.NewGuid()}{Path.GetExtension(model.ImageFile.FileName)}";
+                var filePath = Path.Combine(uploads, fileName);
+                using (var stream = System.IO.File.Create(filePath))
+                {
+                    await model.ImageFile.CopyToAsync(stream);
+                }
+                model.ImageUrl = $"/uploads/{fileName}";
+            }
 
             var propertyId = await _ownerService.CreatePropertyAsync(model, ownerId);
 
@@ -75,10 +105,16 @@ namespace Online_Booking_System.Controllers
         public async Task<IActionResult> EditProperty(int id)
         {
             var ownerId = GetOwnerId();
-            if (ownerId == null) return Challenge();
+            if (ownerId == null)
+            {
+                return Challenge();
+            }
 
             var model = await _ownerService.GetPropertyForEditAsync(id, ownerId);
-            if (model == null) return NotFound();
+            if (model == null)
+            {
+                return NotFound();
+            }
 
             return View(model);
         }
@@ -88,10 +124,15 @@ namespace Online_Booking_System.Controllers
         public async Task<IActionResult> EditProperty(EditPropertyViewModel model)
         {
             if (!ModelState.IsValid)
+            {
                 return View(model);
+            }
 
             var ownerId = GetOwnerId();
-            if (ownerId == null) return Challenge();
+            if (ownerId == null)
+            {
+                return Challenge();
+            }
 
             var result = await _ownerService.UpdatePropertyAsync(model, ownerId);
             if (!result)
@@ -110,10 +151,16 @@ namespace Online_Booking_System.Controllers
         public async Task<IActionResult> DeleteProperty(int id)
         {
             var ownerId = GetOwnerId();
-            if (ownerId == null) return Challenge();
+            if (ownerId == null)
+            {
+                return Challenge();
+            }
 
             var model = await _ownerService.GetPropertyForEditAsync(id, ownerId);
-            if (model == null) return NotFound();
+            if (model == null)
+            {
+                return NotFound();
+            }
 
             return View(model);
         }
@@ -123,7 +170,10 @@ namespace Online_Booking_System.Controllers
         public async Task<IActionResult> DeletePropertyConfirmed(int id)
         {
             var ownerId = GetOwnerId();
-            if (ownerId == null) return Challenge();
+            if (ownerId == null)
+            {
+                return Challenge();
+            }
 
             var result = await _ownerService.DeletePropertyAsync(id, ownerId);
             if (!result)
@@ -144,12 +194,58 @@ namespace Online_Booking_System.Controllers
         public async Task<IActionResult> PropertyBookings(int id)
         {
             var ownerId = GetOwnerId();
-            if (ownerId == null) return Challenge();
+            if (ownerId == null)
+            {
+                return Challenge();
+            }
 
             var model = await _ownerService.GetPropertyBookingsAsync(id, ownerId);
-            if (model == null) return NotFound();
+            if (model == null)
+            {
+                return NotFound();
+            }
 
             return View(model);
+        }
+
+        // ─── Confirm Booking (GET view) ───────────────────────────────────────────
+        [HttpGet]
+        public async Task<IActionResult> ConfirmBookingView(int bookingId, int propertyId)
+        {
+            var ownerId = GetOwnerId();
+            if (ownerId == null)
+            {
+                return Challenge();
+            }
+
+            var model = await _ownerService.GetPropertyBookingsAsync(propertyId, ownerId);
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["BookingToConfirm"] = bookingId;
+            return View("ConfirmBooking", model);
+        }
+
+        // ─── Cancel Booking (GET view) ────────────────────────────────────────────
+        [HttpGet]
+        public async Task<IActionResult> CancelBookingView(int bookingId, int propertyId)
+        {
+            var ownerId = GetOwnerId();
+            if (ownerId == null)
+            {
+                return Challenge();
+            }
+
+            var model = await _ownerService.GetPropertyBookingsAsync(propertyId, ownerId);
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["BookingToCancel"] = bookingId;
+            return View("CancelBooking", model);
         }
 
         // ─── Confirm Booking ──────────────────────────────────────────────────────
@@ -159,12 +255,20 @@ namespace Online_Booking_System.Controllers
         public async Task<IActionResult> ConfirmBooking(int bookingId, int propertyId)
         {
             var ownerId = GetOwnerId();
-            if (ownerId == null) return Challenge();
+            if (ownerId == null)
+            {
+                return Challenge();
+            }
 
             var result = await _ownerService.ConfirmBookingAsync(bookingId, ownerId);
-            TempData[result ? "Success" : "Error"] = result
-                ? "Booking confirmed successfully."
-                : "Failed to confirm booking.";
+            if (result)
+            {
+                TempData["Success"] = "Booking confirmed successfully.";
+            }
+            else
+            {
+                TempData["Error"] = "Failed to confirm booking.";
+            }
 
             return RedirectToAction(nameof(PropertyBookings), new { id = propertyId });
         }
@@ -176,12 +280,20 @@ namespace Online_Booking_System.Controllers
         public async Task<IActionResult> CancelBooking(int bookingId, int propertyId)
         {
             var ownerId = GetOwnerId();
-            if (ownerId == null) return Challenge();
+            if (ownerId == null)
+            {
+                return Challenge();
+            }
 
             var result = await _ownerService.CancelBookingAsync(bookingId, ownerId);
-            TempData[result ? "Success" : "Error"] = result
-                ? "Booking cancelled successfully."
-                : "Failed to cancel booking.";
+            if (result)
+            {
+                TempData["Success"] = "Booking cancelled successfully.";
+            }
+            else
+            {
+                TempData["Error"] = "Failed to cancel booking.";
+            }
 
             return RedirectToAction(nameof(PropertyBookings), new { id = propertyId });
         }

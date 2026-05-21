@@ -73,6 +73,20 @@ namespace Online_Booking_System.Controllers
                 CreatedAt = DateTime.Now
             };
 
+            // If a file was uploaded, save it to wwwroot/uploads and set ImageUrl
+            if (model.ImageFile != null && model.ImageFile.Length > 0)
+            {
+                var uploads = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                if (!Directory.Exists(uploads)) Directory.CreateDirectory(uploads);
+                var fileName = $"ad_{Guid.NewGuid()}{Path.GetExtension(model.ImageFile.FileName)}";
+                var filePath = Path.Combine(uploads, fileName);
+                using (var stream = System.IO.File.Create(filePath))
+                {
+                    await model.ImageFile.CopyToAsync(stream);
+                }
+                ad.ImageUrl = $"/uploads/{fileName}";
+            }
+
             _context.Advertisements.Add(ad);
             await _context.SaveChangesAsync();
 
@@ -148,7 +162,23 @@ namespace Online_Booking_System.Controllers
 
             ad.Title = model.Title;
             ad.Description = model.Description;
-            ad.ImageUrl = model.ImageUrl;
+            // If a new file uploaded, save and update URL
+            if (model.ImageFile != null && model.ImageFile.Length > 0)
+            {
+                var uploads = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                if (!Directory.Exists(uploads)) Directory.CreateDirectory(uploads);
+                var fileName = $"ad_{Guid.NewGuid()}{Path.GetExtension(model.ImageFile.FileName)}";
+                var filePath = Path.Combine(uploads, fileName);
+                using (var stream = System.IO.File.Create(filePath))
+                {
+                    await model.ImageFile.CopyToAsync(stream);
+                }
+                ad.ImageUrl = $"/uploads/{fileName}";
+            }
+            else
+            {
+                ad.ImageUrl = model.ImageUrl;
+            }
 
             ad.Status = AdvertisementStatus.Pending;
             ad.AdminNotes = null;

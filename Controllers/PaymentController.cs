@@ -85,7 +85,7 @@ namespace Online_Booking_System.Controllers
                     checkoutVm.PropertyTitle = txn.PropertyTitle;
                 }
 
-                return View("StripeCheckout", checkoutVm);
+                return View("~/Views/Payment/StripeCheckout.cshtml", checkoutVm);
             }
 
             // PayMob / PayPal use hosted redirect
@@ -212,21 +212,48 @@ namespace Online_Booking_System.Controllers
             return Ok();
         }
 
+        // ── GET /Payment/Refund/{id} ──────────────────────────────────────────
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Refund(int id)
+        {
+            var transaction = await _paymentService.GetTransactionByIdAsync(id);
+            if (transaction == null)
+            {
+                TempData["Error"] = "Transaction not found.";
+                return RedirectToAction(nameof(History));
+            }
+
+            var model = new RefundRequestViewModel();
+            model.TransactionId = transaction.Id;
+            model.PropertyTitle = transaction.PropertyTitle;
+            model.Amount = transaction.Amount;
+            model.Currency = transaction.Currency;
+
+            return View(model);
+        }
+
         // ── POST /Payment/Refund ──────────────────────────────────────────────
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Refund(int transactionId, decimal amount, string reason)
+        public async Task<IActionResult> Refund(RefundRequestViewModel model)
         {
-            var result = await _paymentService.RefundAsync(transactionId, amount, reason);
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var result = await _paymentService.RefundAsync(model.TransactionId, model.Amount, model.Reason);
 
             if (result.Success)
+            {
                 TempData["Success"] = "Refund issued successfully.";
-            else
-                TempData["Error"] = $"Refund failed: {result.ErrorMessage}";
+                return RedirectToAction(nameof(History));
+            }
 
-            // Redirect back to history page — admin sees all transactions
-            return RedirectToAction(nameof(History), new { bookingId = 0 });
+            TempData["Error"] = "Refund failed: " + result.ErrorMessage;
+            return View(model);
         }
     }
 }

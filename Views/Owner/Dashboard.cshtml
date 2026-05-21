@@ -62,10 +62,10 @@
                         </div>
                     </div>
                     <h2 class="fw-bold mb-0">@Model.TotalBookings</h2>
-                    <small class="text-muted">
+                        <small class="text-muted">
                         <span class="text-warning fw-semibold">@Model.PendingBookings pending</span>
                         &nbsp;·&nbsp;
-                        <span class="text-success fw-semibold">@Model.ConfirmedBookings confirmed</span>
+                        <span class="text-success fw-semibold">@Model.ApprovedBookings approved</span>
                     </small>
                 </div>
             </div>
@@ -81,7 +81,7 @@
                         </div>
                     </div>
                     <h2 class="fw-bold mb-0">$@Model.TotalRevenue.ToString("N0")</h2>
-                    <small class="text-muted">From confirmed bookings</small>
+                    <small class="text-muted">From paid bookings</small>
                 </div>
             </div>
         </div>

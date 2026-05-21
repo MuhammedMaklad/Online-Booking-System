@@ -6,31 +6,18 @@
 }
 
 <div class="container py-5 mt-4">
-
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold">
             <i class="bi bi-receipt text-primary me-2"></i>Payment History
         </h2>
-        <a asp-controller="Booking" asp-action="MyBookings"
-               class="btn btn-outline-secondary rounded-3">
-            <i class="bi bi-arrow-left me-1"></i>Back to Bookings
-        </a>
-    </div>
 
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            @TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            @TempData["Error"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
+        @if (bookingId > 0)
+        {
+            <a asp-controller="Booking" asp-action="MyBookings" class="btn btn-outline-secondary rounded-3">
+                <i class="bi bi-arrow-left me-1"></i> Back to Bookings
+            </a>
+        }
+    </div>
 
     @if (!Model.Any())
     {
@@ -70,134 +57,60 @@
                                 _ => "bg-secondary"
                             };
 
+                            string methodIcon = txn.Method.ToString() switch
+                            {
+                                "Stripe" => "bi-stripe",
+                                _ => "bi-credit-card"
+                            };
+
                             <tr>
                                 <td class="ps-4 text-muted small">#@txn.Id</td>
                                 <td class="fw-semibold">@txn.PropertyTitle</td>
                                 <td>
                                     <span class="d-flex align-items-center gap-2">
-                                        <i class="bi bi-stripe"></i>@txn.Method
+                                        <i class="bi @methodIcon"></i> @txn.Method
                                     </span>
                                 </td>
                                 <td class="fw-bold text-primary">
                                     @txn.Amount.ToString("C") @txn.Currency
                                 </td>
                                 <td>
-                                    <span class="badge @statusBadge rounded-pill px-3 py-2">
-                                        @txn.Status
-                                    </span>
+                                    <span class="badge @statusBadge rounded-pill px-3 py-2">@txn.Status</span>
                                 </td>
-                                <td class="text-muted small">
-                                    @txn.CreatedAt.ToString("MMM dd, yyyy HH:mm")
-                                </td>
+                                <td class="text-muted small">@txn.CreatedAt.ToString("MMM dd, yyyy HH:mm")</td>
                                 <td class="pe-4">
-                                    @if (txn.Status == Online_Booking_System.Models.Payments.PaymentStatus.Completed
-                                                                             && User.IsInRole("Admin"))
+                                    @if (txn.Status == Online_Booking_System.Models.Payments.PaymentStatus.Completed && User.IsInRole("Admin"))
                                     {
-                                        <button type="button"
-                                                class="btn btn-sm btn-outline-danger rounded-3"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#refundModal-@txn.Id">
-                                            <i class="bi bi-arrow-counterclockwise me-1"></i>Refund
-                                        </button>
+                                        <a asp-controller="Payment"
+                                               asp-action="Refund"
+                                               asp-route-id="@txn.Id"
+                                               class="btn btn-sm btn-outline-danger rounded-3">
+                                            <i class="bi bi-arrow-counterclockwise me-1"></i> Refund
+                                        </a>
                                     }
                                     else if (txn.FailureReason is not null)
                                     {
-                                        <span class="text-danger small"
-                                              title="@txn.FailureReason">
-                                            <i class="bi bi-info-circle me-1"></i>Failed
-                                        </span>
+                                        <button type="button"
+                                                class="btn btn-sm btn-link text-danger p-0 border-0 text-decoration-none"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#reason-@txn.Id"
+                                                aria-expanded="false"
+                                                aria-controls="reason-@txn.Id">
+                                            <i class="bi bi-info-circle me-1"></i> See reason
+                                        </button>
                                     }
                                 </td>
                             </tr>
 
-                            @* One modal per transaction — no shared state bug *@
-                            @if (txn.Status == Online_Booking_System.Models.Payments.PaymentStatus.Completed
-                                                             && User.IsInRole("Admin"))
+                            @if (txn.FailureReason is not null)
                             {
-                                <tr style="display:none;">
-                                    <td colspan="7">
-                                        <div class="modal fade"
-                                             id="refundModal-@txn.Id"
-                                             tabindex="-1"
-                                             aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content border-0 shadow rounded-4">
-                                                    <div class="modal-header border-0 pb-0">
-                                                        <h5 class="modal-title fw-bold">
-                                                            <i class="bi bi-arrow-counterclockwise text-danger me-2"></i>
-                                                            Issue Refund — Transaction #@txn.Id
-                                                        </h5>
-                                                        <button type="button" class="btn-close"
-                                                                data-bs-dismiss="modal"></button>
-                                                    </div>
-                                                    <form asp-controller="Payment"
-                                                          asp-action="Refund"
-                                                          method="post">
-                                                        @Html.AntiForgeryToken()
-                                                        <div class="modal-body pt-3">
-                                                            <input type="hidden" name="transactionId"
-                                                                   value="@txn.Id" />
-
-                                                            <div class="bg-light rounded-3 p-3 mb-3">
-                                                                <div class="d-flex justify-content-between">
-                                                                    <span class="text-muted small">Property</span>
-                                                                    <span class="fw-semibold small">
-                                                                        @txn.PropertyTitle
-                                                                    </span>
-                                                                </div>
-                                                                <div class="d-flex justify-content-between mt-1">
-                                                                    <span class="text-muted small">Paid</span>
-                                                                    <span class="fw-bold text-primary small">
-                                                                        @txn.Amount.ToString("C") @txn.Currency
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="mb-3">
-                                                                <label class="form-label fw-semibold">
-                                                                    Refund Amount
-                                                                </label>
-                                                                <div class="input-group">
-                                                                    <span class="input-group-text">$</span>
-                                                                    <input type="number"
-                                                                           name="amount"
-                                                                           class="form-control"
-                                                                           value="@txn.Amount"
-                                                                           step="0.01"
-                                                                           min="0.01"
-                                                                           max="@txn.Amount"
-                                                                           required />
-                                                                </div>
-                                                                <div class="form-text">
-                                                                    Maximum: @txn.Amount.ToString("C")
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="mb-3">
-                                                                <label class="form-label fw-semibold">
-                                                                    Reason
-                                                                </label>
-                                                                <textarea name="reason"
-                                                                          class="form-control rounded-3"
-                                                                          rows="3"
-                                                                          placeholder="Reason for refund…"
-                                                                          required></textarea>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer border-0 pt-0">
-                                                            <button type="button"
-                                                                    class="btn btn-outline-secondary rounded-3"
-                                                                    data-bs-dismiss="modal">
-                                                                Cancel
-                                                            </button>
-                                                            <button type="submit"
-                                                                    class="btn btn-danger rounded-3">
-                                                                <i class="bi bi-arrow-counterclockwise me-1"></i>
-                                                                Issue Refund
-                                                            </button>
-                                                        </div>
-                                                    </form>
-                                                </div>
+                                <tr class="collapse bg-light-subtle" id="reason-@txn.Id">
+                                    <td colspan="7" class="px-4 py-3">
+                                        <div class="alert alert-danger d-flex align-items-center mb-0 rounded-3 shadow-sm border-0">
+                                            <i class="bi bi-exclamation-triangle-fill fs-5 me-3"></i>
+                                            <div>
+                                                <strong class="d-block mb-1">Gateway Processing Error:</strong>
+                                                <span class="small text-muted">@txn.FailureReason</span>
                                             </div>
                                         </div>
                                     </td>

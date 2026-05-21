@@ -24,9 +24,10 @@ namespace Online_Booking_System.Services
             var approvedProps = await _context.Properties.CountAsync(p => p.Status == PropertyStatus.Approved);
             var totalBook = await _context.Bookings.CountAsync();
             var pendingBook = await _context.Bookings.CountAsync(b => b.Status == BookingStatus.Pending);
-            var totalRevenue = await _context.Bookings
-                .Where(b => b.Status == BookingStatus.Confirmed)
-                .SumAsync(b => b.TotalPrice);
+            // Revenue should be based on completed payment transactions
+            var totalRevenue = await _context.PaymentTransactions
+                .Where(t => t.Status == PaymentStatus.Completed)
+                .SumAsync(t => t.Amount);
             var totalAds = await _context.Advertisements.CountAsync();
             var pendingAds = await _context.Advertisements.CountAsync(a => a.Status == AdvertisementStatus.Pending);
             var completedPay = await _context.PaymentTransactions.CountAsync(t => t.Status == PaymentStatus.Completed);
@@ -196,5 +197,29 @@ namespace Online_Booking_System.Services
             if (a == null) return false;
             _context.Advertisements.Remove(a); await _context.SaveChangesAsync(); return true;
         }
+
+        //public async Task<IEnumerable<BookingsViewModel>> GetAllBookingsAsync()
+        //{
+        //    var bookings = await _context.Bookings
+        //        .Include(b => b.Property)
+        //        .Include(b => b.User)
+        //        .OrderByDescending(b => b.CreatedAt)
+        //        .Select(b => new BookingsViewModel
+        //        {
+        //            BookingId = b.Id,
+        //            PropertyTitle = b.Property.Title,
+        //            PropertyCity = b.Property.City,
+        //            PropertyImageUrl = b.Property.ImageUrl,
+        //            UserName = b.User.UserName,
+        //            CheckIn = b.CheckIn,
+        //            CheckOut = b.CheckOut,
+        //            GuestsCount = b.GuestsCount,
+        //            TotalPrice = b.TotalPrice,
+        //            Status = b.Status.ToString()
+        //        })
+        //        .ToListAsync();
+
+        //    return bookings;
+        //}
     }
 }

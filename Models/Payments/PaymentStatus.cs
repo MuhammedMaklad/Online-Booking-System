@@ -5,6 +5,7 @@ namespace Online_Booking_System.Models.Payments
         Pending,
         Processing,
         Completed,
+        RefundPending,
         Failed,
         Refunded,
         Cancelled

@@ -46,8 +46,22 @@ namespace Online_Booking_System.Services.Payment
             if (booking is null)
                 return PaymentInitiationResult.Fail("Booking not found.");
 
-            if (booking.Status == BookingStatus.Cancelled)
-                return PaymentInitiationResult.Fail("Cannot pay for a cancelled booking.");
+            // Do not allow payment for cancelled or refund pending bookings
+            if (booking.Status == BookingStatus.CancelledByUser
+                || booking.Status == BookingStatus.CancelledByOwner
+                || booking.Status == BookingStatus.CancelledByAdmin
+                || booking.Status == BookingStatus.RefundPending)
+            {
+                return PaymentInitiationResult.Fail("Cannot pay for a cancelled or refund-pending booking.");
+            }
+
+            // Only allow payment after owner approved the booking
+            if (booking.Status == BookingStatus.Pending)
+                return PaymentInitiationResult.Fail("Booking is not approved by the owner yet. Please wait for owner approval before paying.");
+            if (booking.Status == BookingStatus.Approved || booking.Status == BookingStatus.Paid)
+            {
+                // allowed to proceed or view history
+            }
 
             // Prevent duplicate completed payments
             var existingCompleted = await _context.PaymentTransactions
@@ -130,7 +144,8 @@ namespace Online_Booking_System.Services.Payment
             if (result.Success && result.Status == PaymentStatus.Completed)
             {
                 transaction.CompletedAt = DateTime.UtcNow;
-                transaction.Booking.Status = BookingStatus.Confirmed;
+                // Mark booking as Paid; later flows can mark as Confirmed
+                transaction.Booking.Status = BookingStatus.Paid;
             }
             else if (!result.Success)
             {
@@ -175,13 +190,15 @@ namespace Online_Booking_System.Services.Payment
             {
                 case PaymentStatus.Completed:
                     transaction.CompletedAt = DateTime.UtcNow;
-                    transaction.Booking.Status = BookingStatus.Confirmed;
+                    // Payment completed -> mark Paid
+                    transaction.Booking.Status = BookingStatus.Paid;
                     break;
                 case PaymentStatus.Failed:
                     transaction.FailedAt = DateTime.UtcNow;
                     break;
                 case PaymentStatus.Refunded:
-                    transaction.Booking.Status = BookingStatus.Cancelled;
+                    // Payment provider signalled refund completed
+                    transaction.Booking.Status = BookingStatus.Refunded;
                     break;
             }
 
@@ -215,7 +232,7 @@ namespace Online_Booking_System.Services.Payment
             if (result.Success)
             {
                 transaction.Status = PaymentStatus.Refunded;
-                transaction.Booking.Status = BookingStatus.Cancelled;
+                transaction.Booking.Status = BookingStatus.Refunded;
                 await _context.SaveChangesAsync();
             }
 

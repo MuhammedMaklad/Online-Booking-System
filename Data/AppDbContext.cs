@@ -6,6 +6,7 @@ using Online_Booking_System.Models.Payments;
 using Online_Booking_System.Models.Properties;
 using Online_Booking_System.Models.Advertisements;
 using System.Reflection.Emit;
+using Online_Booking_System.ViewModels;
 
 namespace Online_Booking_System.Data
 {
@@ -23,6 +24,9 @@ namespace Online_Booking_System.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.Entity<Booking>()
+                .Property(x => x.TotalPrice)
+                .HasPrecision(18, 2);
 
             // Prevent multiple cascade paths on PaymentTransactions
             builder.Entity<PaymentTransaction>()
@@ -46,5 +50,6 @@ namespace Online_Booking_System.Data
                 .HasForeignKey(a => a.OwnerId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
+      //public DbSet<Online_Booking_System.ViewModels.BookingsViewModel> BookingsViewModel { get; set; } = default!;
     }
 }

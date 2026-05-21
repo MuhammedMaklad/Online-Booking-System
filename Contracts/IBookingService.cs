@@ -9,5 +9,6 @@ namespace Online_Booking_System.Contracts
             string userId);
         Task<IEnumerable<MyBookingViewModel>> GetUserBookingsAsync(string userId);
         Task<bool> CancelBookingAsync(int bookingId, string userId);
+        Task<bool> AdminCancelBookingAsync(int bookingId, string adminId);
     }
 }
