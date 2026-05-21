@@ -71,12 +71,13 @@ namespace Online_Booking_System.Services
             return new OwnerDashboardViewModel
             {
                 TotalProperties = propertyIds.Count,
-                TotalBookings = bookings.Count,
+                TotalBookings = bookings.Count(b => b.Status == BookingStatus.Pending || b.Status == BookingStatus.Approved || b.Status == BookingStatus.Paid),
                 PendingBookings = bookings.Count(b => b.Status == BookingStatus.Pending),
-                ConfirmedBookings = bookings.Count(b => b.Status == BookingStatus.Confirmed),
-                CancelledBookings = bookings.Count(b => b.Status == BookingStatus.Cancelled),
+                ApprovedBookings = bookings.Count(b => b.Status == BookingStatus.Approved),
+                CancelledBookings = bookings.Count(b => b.Status == BookingStatus.CancelledByOwner || b.Status == BookingStatus.CancelledByUser || b.Status == BookingStatus.CancelledByAdmin),
+                // Revenue should be counted only for paid bookings
                 TotalRevenue = bookings
-                    .Where(b => b.Status != BookingStatus.Cancelled)
+                    .Where(b => b.Status == BookingStatus.Paid)
                     .Sum(b => b.TotalPrice),
                 RecentProperties = recentProperties,
                 RecentBookings = recentBookings
@@ -240,6 +241,7 @@ namespace Online_Booking_System.Services
                 })
                 .ToListAsync();
 
+
             return new PropertyBookingsViewModel
             {
                 PropertyId = propertyId,
@@ -259,7 +261,8 @@ namespace Online_Booking_System.Services
             if (booking == null || booking.Status != BookingStatus.Pending)
                 return false;
 
-            booking.Status = BookingStatus.Confirmed;
+            // Owner accepts -> mark as Approved so customer can pay
+            booking.Status = BookingStatus.Approved;
             _context.Bookings.Update(booking);
             await _context.SaveChangesAsync();
 
@@ -274,10 +277,23 @@ namespace Online_Booking_System.Services
                 .Include(b => b.Property)
                 .FirstOrDefaultAsync(b => b.Id == bookingId && b.Property.OwnerId == ownerId);
 
-            if (booking == null || booking.Status == BookingStatus.Cancelled)
+            if (booking == null)
                 return false;
 
-            booking.Status = BookingStatus.Cancelled;
+            // Owner cancellation depends on current status
+            if (booking.Status == BookingStatus.Pending || booking.Status == BookingStatus.Approved)
+            {
+                booking.Status = BookingStatus.CancelledByOwner;
+            }
+            else if (booking.Status == BookingStatus.Paid)
+            {
+                // Move to refund pending when owner cancels a paid booking
+                booking.Status = BookingStatus.RefundPending;
+            }
+            else
+            {
+                return false;
+            }
             _context.Bookings.Update(booking);
             await _context.SaveChangesAsync();
 

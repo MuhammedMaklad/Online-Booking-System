@@ -128,5 +128,12 @@ namespace Online_Booking_System.Controllers
                 : "Delete failed.";
             return RedirectToAction(nameof(Advertisements));
         }
+
+        //[HttpGet]
+        //public async Task<IActionResult> Bookings()
+        //{
+        //    var bookings = await _adminService.GetAllBookingsAsync();
+        //    return View(bookings);
+        //}
     }
 }

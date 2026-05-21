@@ -16,5 +16,6 @@ namespace Online_Booking_System.Contracts
         Task<bool> ApproveAdvertisementAsync(int adId, string? adminNotes);
         Task<bool> RejectAdvertisementAsync(int adId, string? adminNotes);
         Task<bool> DeleteAdvertisementAsync(int adId);
+        //Task<IEnumerable<BookingsViewModel>> GetAllBookingsAsync();
     }
 }

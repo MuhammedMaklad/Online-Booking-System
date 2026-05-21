@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Online_Booking_System.Models.Bookings;
+using Microsoft.AspNetCore.Http;
+
 
 namespace Online_Booking_System.ViewModels
 {
@@ -10,7 +12,8 @@ namespace Online_Booking_System.ViewModels
         public int TotalProperties { get; set; }
         public int TotalBookings { get; set; }
         public int PendingBookings { get; set; }
-        public int ConfirmedBookings { get; set; }
+        // Number of bookings the owner approved (customer can pay)
+        public int ApprovedBookings { get; set; }
         public int CancelledBookings { get; set; }
         public decimal TotalRevenue { get; set; }
         public List<OwnerPropertySummaryViewModel> RecentProperties { get; set; } = [];
@@ -52,6 +55,7 @@ namespace Online_Booking_System.ViewModels
 
     // ─── Create / Edit Property ───────────────────────────────────────────────────
 
+
     public class CreatePropertyViewModel
     {
         [Required]
@@ -82,6 +86,9 @@ namespace Online_Booking_System.ViewModels
 
         [Url]
         public string? ImageUrl { get; set; }
+
+        // File upload for main image (optional)
+        public IFormFile? ImageFile { get; set; }
 
         /// <summary>Comma-separated gallery image URLs</summary>
         public string? GalleryImages { get; set; }

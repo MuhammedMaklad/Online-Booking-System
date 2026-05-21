@@ -1,0 +1,26 @@
+@model Online_Booking_System.ViewModels.PropertyBookingsViewModel
+
+@{
+    ViewData["Title"] = "Confirm Booking";
+    var bookingId = ViewData["BookingToConfirm"] as int? ?? 0;
+}
+
+<div class="container py-5">
+    <div class="card max-width-600 mx-auto shadow-sm">
+        <div class="card-body">
+            <h4 class="card-title text-success">Confirm Booking Request</h4>
+            <p class="text-muted">Please confirm that you want to accept this booking request and reserve the dates.</p>
+
+            <form asp-action="ConfirmBooking" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="bookingId" value="@bookingId" />
+                <input type="hidden" name="propertyId" value="@Model.PropertyId" />
+
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-success px-4">Confirm & Approve</button>
+                    <a asp-action="PropertyBookings" asp-route-id="@Model.PropertyId" class="btn btn-outline-secondary">Go Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

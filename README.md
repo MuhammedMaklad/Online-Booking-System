@@ -1,4 +1,162 @@
-# Online Booking System
+A production-ready ASP.NET Core MVC application for listing properties, managing bookings, and handling payments. Designed with role-based access (User, Owner, Admin), a service-layer architecture, and EF Core for data persistence.
+
+---
+
+## Short Description
+
+This project implements a full-featured online booking platform where Owners publish properties, Users make reservations, and Admins moderate content and manage platform operations. The system includes a booking lifecycle (Pending → Approved → Paid), flexible cancellation and refund workflows, and integration points for payment providers.
+
+---
+
+## Features
+
+### User
+- Register / login using ASP.NET Identity
+- Browse approved property listings
+- Reserve properties (create bookings)
+- View personal bookings dashboard
+- Pay for approved bookings via pluggable payment providers
+- Request cancellations (rules vary by booking status)
+
+### Owner
+- Create, edit and delete property listings (CRUD)
+- View bookings for owned properties
+- Approve or reject booking requests
+- Cancel bookings for owned properties (with refund logic for paid bookings)
+- Owner dashboard with recent bookings and revenue
+
+### Advertisements
+- Owners can create advertisements for properties or promoted listings
+- Manage advertisement content and images
+- Admin approval workflow for advertisements (approve/reject)
+- Admin can view and moderate advertisements site-wide
+
+### Admin
+- Approve or reject property listings and advertisements
+- View site-wide dashboards and metrics
+- Cancel bookings in any state (with refund initiation support)
+- Issue refunds and view payment history
+
+---
+
+## Technologies
+- ASP.NET Core MVC (.NET 10)
+- Entity Framework Core
+- SQL Server
+- ASP.NET Identity (roles: User, Owner, Admin)
+- Dependency Injection, Service Layer pattern
+- Razor Views, Bootstrap 5
+- Payment provider abstraction (Stripe, PayPal, PayMob as examples)
+
+---
+
+## System Workflow
+
+Booking flow (high level):
+
+1. User reserves property → Booking status = `Pending`
+2. Owner approves reservation → Booking status = `Approved`
+3. User pays → Booking status = `Paid`
+
+Cancellation & refund flow:
+- `Pending` or `Approved` bookings can be cancelled by User/Owner/Admin. Status becomes `CancelledByUser`, `CancelledByOwner`, or `CancelledByAdmin` accordingly.
+- If a paid booking is cancelled (by owner/admin/user with conditions), the booking becomes `RefundPending` and an admin may issue the refund. After successful refund the booking becomes `Refunded`.
+
+---
+
+## Status Flow Diagram (text)
+
+Pending (User reserved)
+  ├─ Owner approves → Approved
+  │    └─ User pays → Paid
+  │         └─ If cancelled after payment → RefundPending → (on refund) Refunded
+  ├─ Owner cancels → CancelledByOwner
+  └─ User cancels → CancelledByUser
+
+Admin may cancel from any state:
+  └─ CancelledByAdmin (if not paid) or RefundPending (if paid)
+
+---
+
+## Installation Guide
+
+Prerequisites
+- .NET SDK 10 (install from https://dotnet.microsoft.com)
+- SQL Server (LocalDB or full SQL Server)
+- Optional: Visual Studio 2022/2026 or VS Code
+
+Local setup
+1. Clone repository
+
+   git clone https://github.com/MuhammedMaklad/Online-Booking-System.git
+
+2. Configure connection string
+- Open `appsettings.json` and update `DefaultConnection` to point to your SQL Server instance.
+- For development, `appsettings.Development.json` may contain overrides.
+
+3. Apply database migrations
+
+   dotnet ef database update
+
+If you prefer Visual Studio Package Manager Console:
+
+   Update-Database
+
+4. Seed data
+- The application seeds initial roles and sample owner/admin users on startup (see `Program.cs`). Ensure the database is accessible.
+
+5. Run the application
+
+   dotnet run
+
+Open the site at `https://localhost:5001` (or the URL shown in the console).
+
+---
+
+## Project Structure Overview
+
+- `Controllers/` — MVC controllers
+- `Views/` — Razor views (User, Owner, Admin, Payment flows)
+- `Models/` — Domain entities and enums (Bookings, Properties, Payments)
+- `Models/` — Domain entities and enums (Bookings, Properties, Payments, Advertisements)
+- `Data/` — `AppDbContext` (EF Core) and migrations
+- `Services/` — Business logic (BookingService, OwnerService, PaymentService, etc.)
+- `Contracts/` — Service interfaces
+- `ViewModels/` — DTOs used between Controllers and Views
+- `Migrations/` — EF Core migrations
+- `wwwroot/` — Static assets (CSS, JS, images)
+
+---
+
+## How It Enforces Rules
+- Role-based access: `[Authorize(Roles = "Owner,Admin")]` on Owner areas, Admin-only actions are restricted using `[Authorize(Roles = "Admin")]`.
+- Booking status transitions are managed in services (not controller code) to keep business rules centralized and testable.
+- Availability: Only bookings with `Approved` or `Paid` statuses block dates (overlap logic is centralized in the BookingService).
+- Refunds: Refund execution is guarded by transaction state (only completed transactions can be refunded) to avoid duplicate refunds.
+
+---
+
+## Future Improvements
+- Add audit fields to `Booking` (CancelledBy, CancelledAt, CancelReason, RefundRequestedAt).
+- Expose owner/admin refund workflow as background jobs with retry and reconciliation.
+- Add unit and integration tests for booking and refund flows.
+- Implement a tenant-safe UI for managing multiple currencies and locales.
+- Add API endpoints and OpenAPI/Swagger for external integrations.
+
+---
+
+## Contributing
+- Fork the repository, create a feature branch, and submit pull requests. Follow existing code style and patterns.
+- Run `dotnet ef migrations add <Name>` for schema changes and include migrations in PR.
+
+---
+
+## License
+This repository does not include a license file. Add one if you intend to open-source the code.
+
+---
+
+*Generated for a production-grade ASP.NET Core MVC sample project.*
 
 An ASP.NET Core MVC application for online booking management with user authentication, role-based access control, and email notifications.
 

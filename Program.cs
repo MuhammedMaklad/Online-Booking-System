@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Online_Booking_System.Contracts;
@@ -57,12 +55,8 @@ namespace Online_Booking_System
 
 
             builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
-            builder.Services.Configure<PayMobSettings>(builder.Configuration.GetSection("PayMob"));
-            builder.Services.Configure<PayPalSettings>(builder.Configuration.GetSection("PayPal"));
 
             builder.Services.AddScoped<IPaymentProvider, StripePaymentProvider>();
-            builder.Services.AddScoped<IPaymentProvider, PayMobPaymentProvider>();
-            builder.Services.AddScoped<IPaymentProvider, PayPalPaymentProvider>();
             builder.Services.AddScoped<IPaymentService, PaymentService>();
 
             builder.Services.AddHttpClient("PayMob");
